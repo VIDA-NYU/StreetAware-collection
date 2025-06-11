@@ -1,0 +1,12 @@
+street-aware-scripts/myenv/
+street-aware-scripts/data/
+
+*.pid
+
+*.log
+
+.vscode/
+*.swp
+.DS_Store
+
+.env
