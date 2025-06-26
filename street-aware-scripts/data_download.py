@@ -9,10 +9,10 @@ from datetime import datetime
 
 # —— CONFIGURE YOUR NODES HERE —— #
 NODES = [
-    # {"host": "192.168.0.184", "username": "reip", "password": "reip"},
-    # {"host": "192.168.0.122", "username": "reip", "password": "reip"},
+    {"host": "192.168.0.184", "username": "reip", "password": "reip"},
+    {"host": "192.168.0.122", "username": "reip", "password": "reip"},
     {"host": "192.168.0.108", "username": "reip", "password": "reip"},
-    # {"host": "192.168.0.227", "username": "reip", "password": "reip"},
+    {"host": "192.168.0.227", "username": "reip", "password": "reip"},
 ]
 
 
