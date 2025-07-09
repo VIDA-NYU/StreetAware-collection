@@ -5,7 +5,7 @@
 1. Clone the SSH script repository:
 
    ```
-   git clone https://github.com/harishbalajib/StreetAwareV2
+   https://github.com/VIDA-NYU/StreetAware-collection.git
    ```
 
 2. Power on the camera and sensors, and ensure they're connected to AC power.
