@@ -53,7 +53,7 @@
 ### Clone the repository:
 
 ```
-git clone https://github.com/exploring-curiosity/StreetAwareApp
+git clone https://github.com/VIDA-NYU/StreetAware-collection.git
 ```
 
 ### Frontend Setup
@@ -114,7 +114,7 @@ source myenv/bin/activate
 ### Clone the repository:
 
 ```
-git clone https://github.com/exploring-curiosity/StreetAwareApp
+git clone https://github.com/VIDA-NYU/StreetAware-collection.git
 ```
 
 ### Make scripts executable:
