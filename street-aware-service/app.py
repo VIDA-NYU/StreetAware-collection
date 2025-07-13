@@ -3,6 +3,14 @@
 import os
 import asyncio
 import json
+import sys
+
+SCRIPT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "street-aware-scripts"))
+sys.path.insert(0, SCRIPT_DIR)
+
+from job_status_tracker import read_status
+sys.path.remove(SCRIPT_DIR)
+
 
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,6 +37,15 @@ def _terminate_current():
     if current_proc and current_proc.returncode is None:
         current_proc.terminate()
         current_proc = None
+
+
+@app.get("/ssh-job-status")
+def ssh_job_status():
+    """
+    Return the current SSH job status (state + PID) per device.
+    """
+    return JSONResponse(read_status())
+
 
 @app.on_event("shutdown")
 def cleanup_child():

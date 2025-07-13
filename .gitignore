@@ -10,3 +10,6 @@ street-aware-scripts/data/
 .DS_Store
 
 .env
+
+*.pyc
+**/__pycache__/

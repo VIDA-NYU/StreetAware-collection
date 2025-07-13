@@ -10,6 +10,26 @@ export default function SSHControl() {
   const esRef = useRef(null);
   const logContainerRef = useRef(null);
 
+  const [jobStatus, setJobStatus] = useState({});
+
+  // Poll job status while running
+  useEffect(() => {
+    if (!running) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("http://localhost:8080/ssh-job-status");
+        const data = await res.json();
+        setJobStatus(data);
+      } catch (err) {
+        console.error("Failed to fetch job status:", err);
+      }
+    }, 3000); // poll every 3s while running
+
+    return () => clearInterval(interval);
+  }, [running]);
+
+
   // Start the SSH job and open SSE stream
   const startJob = () => {
     if (running) return;
@@ -130,6 +150,45 @@ export default function SSHControl() {
           {panelOpen ? "Hide Logs" : "Show Logs"}
         </button>
       </div>
+
+      {running && (
+        <div style={{ marginTop: 16 }}>
+          <h4>Live Job Status</h4>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontSize: "14px",
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
+                  Host
+                </th>
+                <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
+                  Status
+                </th>
+                <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
+                  PID
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(jobStatus).map(([host, { state, pid }]) => (
+                <tr key={host}>
+                  <td>{host}</td>
+                  <td style={{ color: state === "running" ? "green" : state === "terminated" ? "red" : "gray" }}>
+                    {state}
+                  </td>
+                  <td>{pid ?? "N/A"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
 
       {panelOpen && (
         <div

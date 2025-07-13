@@ -7,11 +7,58 @@ import time
 import sys
 import signal
 from threading import Event
+from job_status_tracker import update_status, clear_status, read_status
 
 # Dictionary to track active SSH connections
 active_connections = {}
 # Event to signal global shutdown
 stop_event = Event()
+
+
+def remote_health_poll_loop(host, username, password, interval=10, max_consecutive_failures=3):
+    """
+    Periodically SSH into the device and check if filter.py is still running.
+    Allows transient SSH errors or brief process pauses.
+    If filter.py is consistently not running or SSH repeatedly fails, marks status.
+    """
+    failure_count = 0
+
+    while not stop_event.is_set():
+        try:
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(hostname=host, username=username, password=password, timeout=5)
+
+            stdin, stdout, stderr = client.exec_command("pgrep -f filter.py")
+            output = stdout.read().decode().strip()
+
+            if output and all(line.isdigit() for line in output.splitlines()):
+                # filter.py is running
+                update_status(host, "running")
+                failure_count = 0  # reset failure count
+            else:
+                failure_count += 1
+                print(f"[{host}] filter.py missing check {failure_count}/{max_consecutive_failures}", flush=True)
+                if failure_count >= max_consecutive_failures:
+                    update_status(host, "crashed")
+                    print(f"[{host}] filter.py not running. Marked as crashed.", flush=True)
+                    break
+
+            client.close()
+
+        except Exception as e:
+            failure_count += 1
+            print(f"[{host}] SSH health poll failed ({failure_count}/{max_consecutive_failures}): {e}", flush=True)
+            if failure_count >= max_consecutive_failures:
+                update_status(host, "disconnected")
+                print(f"[{host}] Marked as disconnected after repeated SSH errors.", flush=True)
+                break
+
+        # Exponential backoff: 10s, 20s, 30s... up to 60s max
+        sleep_time = min(interval * (failure_count + 1), 60)
+        time.sleep(sleep_time)
+
+
 
 # Signal handler for graceful shutdown
 def shutdown_handler(signum, frame):
@@ -31,6 +78,7 @@ def ssh_into_device(host, username, password, command, timeout):
     start_time = time.time()
     client = None
     try:
+        update_status(host, "starting")
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
@@ -42,9 +90,33 @@ def ssh_into_device(host, username, password, command, timeout):
         print(f"[{host}] Connected (timeout={timeout}s)", flush=True)
         active_connections[host] = client
 
+        threading.Thread(
+            target=remote_health_poll_loop,
+            args=(host, username, password),
+            daemon=True
+        ).start()
+
         # Wrap in shell timeout for remote kill
-        remote_cmd = f"timeout {timeout}s sh -c '{command}'"
-        stdin, stdout, stderr = client.exec_command(remote_cmd, timeout=timeout, get_pty=True)
+        # remote_cmd = f"sh -c 'echo $$; exec timeout {timeout}s {command}'"
+        # remote_cmd = f"timeout {timeout}s sh -c '{command}'"
+        remote_cmd = f"bash -c 'echo $$; exec timeout {timeout}s bash -c \"cd software/reip-pipelines/smart-filter && python3 filter.py\"'"
+        _, stdout, stderr = client.exec_command(remote_cmd, timeout=timeout, get_pty=True)
+        
+        pid_line = None
+        start = time.time()
+        while not stop_event.is_set() and (time.time() - start) < 3:
+            if stdout.channel.recv_ready():
+                pid_line = stdout.readline().strip()
+                break
+            time.sleep(0.05)
+
+        if pid_line and pid_line.isdigit():
+            update_status(host, "running", pid=int(pid_line))
+            print(f"[{host}] Remote PID: {pid_line}", flush=True)
+        else:
+            update_status(host, "running", pid=None)
+            print(f"[{host}] Failed to get PID", flush=True)
+
 
         # Stream output until remote ends or shutdown requested
         while not stop_event.is_set():
@@ -73,6 +145,9 @@ def ssh_into_device(host, username, password, command, timeout):
         if client:
             client.close()
         active_connections.pop(host, None)
+        prev = read_status().get(host, {}).get("state", "")
+        if prev not in ("crashed", "disconnected"):
+            update_status(host, "terminated")
         print(f"[{host}] Disconnected", flush=True)
 
 
@@ -88,6 +163,7 @@ def main():
     timeout = args.timeout
 
     print(f"Starting SSH sessions with timeout: {timeout} seconds", flush=True)
+    clear_status()
 
     # List of devices
     devices = [
