@@ -14,6 +14,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import time
 import threading
 from queue import Queue
+import shutil
 
 # CUDA parallelization support
 def check_cuda_availability():
@@ -204,52 +205,49 @@ class ParallelCameraProcessor:
         if self.current_video is not None:
             self.current_video.release()
 
-def process_camera_parallel(camera_id, data_path, gpu_id, master_timeline, threshold, height, width):
+def rotate_frame(frame, angle):
+    if angle == 0:
+        return frame
+    elif angle == 90:
+        return cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    elif angle == 180:
+        return cv2.rotate(frame, cv2.ROTATE_180)
+    elif angle == 270:
+        return cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    else:
+        raise ValueError("Rotation angle must be 0, 90, 180, or 270")
+
+def process_camera_parallel(camera_id, data_path, gpu_id, master_timeline, threshold, height, width, rotation):
     # Process a single camera in parallel
     processor = ParallelCameraProcessor(camera_id, data_path, gpu_id)
-    
-    # Set resize function based on CUDA availability
     if processor.cuda_available:
         resize_function = processor.resize_frame_gpu
     else:
         resize_function = processor.resize_frame_cpu
-    
     camera_frames = []
     frame_count = 0
-    
     for global_timestamp in master_timeline:
         current_frames = processor.get_current_frames()
-        
         if not current_frames:
-            # No frames available - add black frame
-            camera_frames.append(None)  # Will be replaced with black frame later
+            camera_frames.append(None)
             continue
-        
-        # Find best matching frame for this timestamp
         best_frame = None
         best_distance = float('inf')
-        
         for frame_info in current_frames:
             distance = abs(global_timestamp - frame_info['timestamp'])
             if distance < best_distance:
                 best_distance = distance
                 best_frame = frame_info['frame']
-        
         if best_frame is not None and best_distance < threshold:
-            # Use actual frame
             if best_frame.shape[:2] != (height, width):
                 best_frame = resize_function(best_frame, (width, height))
+            best_frame = rotate_frame(best_frame, rotation)
             camera_frames.append(best_frame)
         else:
-            # Use black frame
-            camera_frames.append(None)  # Will be replaced with black frame later
-        
+            camera_frames.append(None)
         frame_count += 1
-        
-        # Advance frame batches periodically
         if frame_count % 50 == 0:
             processor.advance_frame_batch()
-    
     processor.cleanup()
     return camera_id, camera_frames
 
@@ -284,23 +282,15 @@ def create_master_timeline_parallel(all_timestamps, fps=30):
     
     return master_timeline
 
-def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_frames=300, fps=30):
-    # Build mosaic video using 8-camera parallel CUDA processing
-    
+def build_mosaic_video_parallel_cuda(data_path, output_dir, threshold=50, max_frames=300, fps=30, rotation=0):
     print("Building Mosaic Video - 8-Camera Parallel CUDA Processing")
-    
-    # Check CUDA availability
     cuda_available, gpu_count = check_cuda_availability()
     if cuda_available:
         print(f"Using CUDA with {gpu_count} GPU(s)")
     else:
         print("CUDA not available, using CPU parallel processing")
-    
-    # Find all camera directories dynamically
     camera_dirs = [d for d in os.listdir(data_path) if os.path.isdir(os.path.join(data_path, d)) and d.replace('.', '').isdigit()]
     camera_nums = []
-    
-    # Find camera numbers by looking at timeline files
     for camera in camera_dirs:
         time_path = os.path.join(data_path, camera, "time")
         if os.path.exists(time_path):
@@ -309,16 +299,19 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
                 cam_num = file_path.stem.split('_')[0]
                 if cam_num not in camera_nums:
                     camera_nums.append(cam_num)
-    
-    # Camera configurations
     cameras = []
     for camera in camera_dirs:
         for cam_num in camera_nums:
             cameras.append(f"{camera}_{cam_num}")
-    
     print(f"Found {len(cameras)} cameras: {cameras}")
-    
-    # Initialize frame tracking
+    # Prepare output directories
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
+    per_camera_dir = os.path.join(output_dir, 'per_camera')
+    mosaic_dir = os.path.join(output_dir, 'mosaic')
+    os.makedirs(per_camera_dir, exist_ok=True)
+    os.makedirs(mosaic_dir, exist_ok=True)
     frame_tracking = {
         "synchronization_info": {
             "method": "8_camera_parallel_cuda",
@@ -327,12 +320,11 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
             "fps": fps,
             "cameras": cameras,
             "cuda_available": cuda_available,
-            "gpu_count": gpu_count
+            "gpu_count": gpu_count,
+            "rotation": rotation
         },
         "frame_sequence": []
     }
-    
-    # Step 1: Collect all timestamps for master timeline
     print("\nStep 1: Collecting timestamps from all cameras")
     all_timestamps = []
     for camera_id in cameras:
@@ -340,68 +332,52 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
         for entry in processor.timeline:
             all_timestamps.append(entry['timestamp'])
         processor.cleanup()
-    
-    # Step 2: Create master timeline
     print("\nStep 2: Creating master timeline")
     master_timeline = create_master_timeline_parallel(all_timestamps, fps)
-    
     if max_frames:
         master_timeline = master_timeline[:max_frames]
         print(f"Processing first {max_frames} frames")
-    
-    # Save master timeline
-    with open('master_timeline_parallel_cuda.json', 'w') as f:
+    with open(os.path.join(mosaic_dir, 'master_timeline_parallel_cuda.json'), 'w') as f:
         json.dump(master_timeline, f, indent=2)
-    print(f"Saved master timeline to master_timeline_parallel_cuda.json")
-    
-    # Step 3: Get video dimensions
+    print(f"Saved master timeline to {os.path.join(mosaic_dir, 'master_timeline_parallel_cuda.json')}")
     print("\nStep 3: Determining video dimensions")
     sample_processor = ParallelCameraProcessor(cameras[0], data_path)
     sample_frame = None
     if sample_processor.frame_buffer:
         sample_frame = sample_processor.frame_buffer[0]['frame']
     sample_processor.cleanup()
-    
     if sample_frame is None:
         print("Error: Could not find any sample frame to determine video dimensions")
         return
-    
-    height, width = sample_frame.shape[:2]
-    print(f"Video dimensions: {width}x{height}")
-    
-    # Step 4: Create mosaic video writer
-    print("\nStep 4: Creating mosaic video writer")
-    
-    # Mosaic layout: 3x3 grid
+    sample_frame_rot = rotate_frame(sample_frame, rotation)
+    height, width = sample_frame_rot.shape[:2]
+    print(f"Video dimensions after rotation: {width}x{height}")
+    print("\nStep 4: Creating video writers")
     mosaic_width = width * 3
     mosaic_height = height * 3
-    
-    # Use H.264 codec
     fourcc = cv2.VideoWriter_fourcc(*'avc1')
-    output_video = cv2.VideoWriter(output_file, fourcc, fps, (mosaic_width, mosaic_height))
-    
-    if not output_video.isOpened():
-        # Fallback to MJPG if H.264 fails
-        print("H.264 failed, trying MJPG codec...")
+    mosaic_output_file = os.path.join(mosaic_dir, 'mosaic.mp4')
+    mosaic_video = cv2.VideoWriter(mosaic_output_file, fourcc, fps, (mosaic_width, mosaic_height))
+    if not mosaic_video.isOpened():
+        print("H.264 failed, trying MJPG codec for mosaic...")
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-        output_video = cv2.VideoWriter(output_file, fourcc, fps, (mosaic_width, mosaic_height))
-        
-        if not output_video.isOpened():
-            print("Error: Could not create video writer")
+        mosaic_video = cv2.VideoWriter(mosaic_output_file, fourcc, fps, (mosaic_width, mosaic_height))
+        if not mosaic_video.isOpened():
+            print("Error: Could not create mosaic video writer")
             return
-    
-    # Create black frame for empty slots
+    camera_writers = {}
+    for i, camera_id in enumerate(cameras):
+        cam_file = os.path.join(per_camera_dir, f"{camera_id}.mp4")
+        writer = cv2.VideoWriter(cam_file, fourcc, fps, (width, height))
+        if not writer.isOpened():
+            print(f"H.264 failed, trying MJPG for {camera_id}...")
+            writer = cv2.VideoWriter(cam_file, cv2.VideoWriter_fourcc(*'MJPG'), fps, (width, height))
+        camera_writers[camera_id] = writer
     black_frame = np.zeros((height, width, 3), dtype=np.uint8)
-    
-    # Step 5: Process all cameras in parallel
     print(f"\nStep 5: Processing {len(cameras)} cameras in parallel")
     print(f"Using threshold: {threshold}")
-    
     start_time = time.time()
-    
-    # Use ProcessPoolExecutor for true parallel processing
     with ProcessPoolExecutor(max_workers=len(cameras)) as executor:
-        # Submit all camera processing tasks
         future_to_camera = {}
         for i, camera_id in enumerate(cameras):
             gpu_id = i % gpu_count if cuda_available and gpu_count > 0 else 0
@@ -413,11 +389,10 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
                 master_timeline, 
                 threshold, 
                 height, 
-                width
+                width,
+                rotation
             )
             future_to_camera[future] = camera_id
-        
-        # Collect results as they complete
         camera_results = {}
         for future in as_completed(future_to_camera):
             camera_id = future_to_camera[future]
@@ -428,27 +403,19 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
             except Exception as e:
                 print(f"Error processing {camera_id}: {e}")
                 camera_results[camera_id] = [None] * len(master_timeline)
-    
     parallel_time = time.time() - start_time
     print(f"Parallel processing completed in {parallel_time:.1f} seconds")
-    
-    # Step 6: Create mosaic video
-    print(f"\nStep 6: Creating mosaic video from {len(master_timeline)} frames")
-    
+    print(f"\nStep 6: Creating mosaic and per-camera videos from {len(master_timeline)} frames")
     frame_count = 0
     for frame_idx, global_timestamp in enumerate(master_timeline):
-        if frame_count % 30 == 0:  # Progress every second
+        if frame_count % 30 == 0:
             print(f"Progress: {frame_count}/{len(master_timeline)} ({frame_count/len(master_timeline)*100:.1f}%)")
-        
-        # Collect frames from all cameras for this timestamp
         camera_frames = []
         timestamp_frame_info = {
             "global_timestamp": global_timestamp,
             "frame_number": frame_count,
             "camera_frames": {}
         }
-        
-        # Process each camera
         for camera_id in cameras:
             if camera_id in camera_results and frame_idx < len(camera_results[camera_id]):
                 frame = camera_results[camera_id][frame_idx]
@@ -458,65 +425,44 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
                         "frame_type": "actual_frame",
                         "frame_loaded": True
                     }
+                    camera_writers[camera_id].write(frame)
                 else:
                     camera_frames.append(black_frame.copy())
                     timestamp_frame_info["camera_frames"][camera_id] = {
                         "frame_type": "black_frame",
                         "reason": "no_frame_available"
                     }
+                    camera_writers[camera_id].write(black_frame.copy())
             else:
                 camera_frames.append(black_frame.copy())
                 timestamp_frame_info["camera_frames"][camera_id] = {
                     "frame_type": "black_frame",
                     "reason": "processing_error"
                 }
-        
-        # Add one more black frame to make 9 frames (3x3 grid)
+                camera_writers[camera_id].write(black_frame.copy())
         camera_frames.append(black_frame.copy())
-        
-        # Add frame tracking info
         frame_tracking["frame_sequence"].append(timestamp_frame_info)
-        
-        # Create mosaic layout (3x3 grid)
-        # Row 1: [Info] [Camera 1] [Camera 2]
-        # Row 2: [Camera 3] [Camera 4] [Camera 5]
-        # Row 3: [Camera 6] [Camera 7] [Camera 8]
-        
-        # Create info frame
         info_frame = black_frame.copy()
         cv2.putText(info_frame, f'Timestamp: {global_timestamp}', (50, 100), 
                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
         cv2.putText(info_frame, f'Frame: {frame_count}', (50, 200), 
                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-        
-        # Create rows
         row1 = np.concatenate((info_frame, camera_frames[0], camera_frames[1]), axis=1)
         row2 = np.concatenate((camera_frames[2], camera_frames[3], camera_frames[4]), axis=1)
         row3 = np.concatenate((camera_frames[5], camera_frames[6], camera_frames[7]), axis=1)
-        
-        # Stack rows to create mosaic
         mosaic_frame = np.concatenate((row1, row2, row3), axis=0)
-        
-        # Write to video
-        output_video.write(mosaic_frame)
+        mosaic_video.write(mosaic_frame)
         frame_count += 1
-    
-    # Step 7: Clean up and save results
-    output_video.release()
-    
+    mosaic_video.release()
+    for writer in camera_writers.values():
+        writer.release()
     total_time = time.time() - start_time
-    
-    # Step 8: Save frame tracking information
-    print("\nStep 8: Saving frame tracking information")
-    
-    # Calculate statistics
+    print("\nStep 7: Saving frame tracking information")
     total_actual_frames = 0
     total_black_frames = 0
     camera_stats = {}
-    
     for camera_id in cameras:
         camera_stats[camera_id] = {"actual_frames": 0, "black_frames": 0}
-    
     for frame_info in frame_tracking["frame_sequence"]:
         for camera_id, camera_frame_info in frame_info["camera_frames"].items():
             if camera_frame_info["frame_type"] == "actual_frame":
@@ -525,8 +471,6 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
             else:
                 total_black_frames += 1
                 camera_stats[camera_id]["black_frames"] += 1
-    
-    # Add statistics to tracking data
     frame_tracking["statistics"] = {
         "total_frames": len(frame_tracking["frame_sequence"]),
         "total_actual_frames": total_actual_frames,
@@ -537,12 +481,9 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
         "total_processing_time": total_time,
         "cuda_used": cuda_available
     }
-    
-    # Save tracking file
-    tracking_file = output_file.replace('.mp4', '_parallel_cuda_tracking.json')
+    tracking_file = os.path.join(mosaic_dir, 'mosaic_parallel_cuda_tracking.json')
     with open(tracking_file, 'w') as f:
         json.dump(frame_tracking, f, indent=2)
-    
     print(f"Saved frame tracking to: {tracking_file}")
     print(f"Total frames processed: {len(frame_tracking['frame_sequence'])}")
     print(f"Actual frames used: {total_actual_frames}")
@@ -551,16 +492,14 @@ def build_mosaic_video_parallel_cuda(data_path, output_file, threshold=50, max_f
     print(f"Parallel processing time: {parallel_time:.1f} seconds")
     print(f"Total processing time: {total_time:.1f} seconds")
     print(f"CUDA acceleration: {'Yes' if cuda_available else 'No'}")
-    
-    # Print camera statistics
     print("\nCamera frame usage:")
     for camera_id, stats in camera_stats.items():
         total = stats["actual_frames"] + stats["black_frames"]
         rate = stats["actual_frames"] / total * 100 if total > 0 else 0
         print(f"  {camera_id}: {stats['actual_frames']}/{total} frames ({rate:.1f}%)")
-    
-    print(f"\n8-Camera Parallel CUDA Mosaic Video Complete")
-    print(f"Output file: {output_file}")
+    print(f"\nMosaic and Individual Videos Complete")
+    print(f"Mosaic output: {mosaic_output_file}")
+    print(f"Per-camera outputs in: {per_camera_dir}")
     print(f"Total frames: {frame_count}")
     print(f"Duration: {frame_count/fps:.1f} seconds")
     print(f"Speedup: {total_time/3600:.1f} hours vs ~30 hours (original)")
@@ -571,29 +510,31 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 USAGE:
-  python sync_videos_GPU.py <data_path> [--output OUTPUT] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS]
+  python sync_videos_GPU.py <data_path> [--output-dir OUTPUT_DIR] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS] [--rotation ROTATION]
 
 OPTIONS:
   data_path           Path to data directory containing camera folders
-  --output            Output video file (default: mosaic_parallel_cuda.mp4)
+  --output-dir        Output directory (default: synced_output)
   --threshold         Threshold for frame selection in milliseconds (default: 50)
   --max-frames        Maximum number of frames to process (default: 300)
   --fps               Output video frames per second (default: 30)
+  --rotation          Rotation angle (0, 90, 180, 270; default: 0)
         """
     )
     parser.add_argument("data_path", help="Path to data directory containing camera folders")
-    parser.add_argument("--output", default="mosaic_parallel_cuda.mp4", help="Output video file")
+    parser.add_argument("--output-dir", default="synced_output", help="Output directory for videos and tracking info")
     parser.add_argument("--threshold", type=int, default=50, help="Threshold for frame selection (milliseconds)")
     parser.add_argument("--max-frames", type=int, default=300, help="Maximum frames to process")
     parser.add_argument("--fps", type=int, default=30, help="Output video FPS")
-    
+    parser.add_argument("--rotation", type=int, default=0, help="Rotation angle (0, 90, 180, 270)")
     args = parser.parse_args()
-    
     if not os.path.exists(args.data_path):
         print(f"Error: Data path {args.data_path} not found")
         return
-    
-    build_mosaic_video_parallel_cuda(args.data_path, args.output, args.threshold, args.max_frames, args.fps)
+    if args.rotation not in [0, 90, 180, 270]:
+        print("Error: --rotation must be 0, 90, 180, or 270")
+        return
+    build_mosaic_video_parallel_cuda(args.data_path, args.output_dir, args.threshold, args.max_frames, args.fps, args.rotation)
 
 if __name__ == "__main__":
     main() 
