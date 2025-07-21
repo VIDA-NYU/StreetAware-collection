@@ -1,83 +1,87 @@
-# StreetAware Project & Video Synchronization Toolkit
+# StreetAware Project - Data Collection & Synchronization Toolkit
 
 This guide covers the complete workflow for the StreetAware project, from data collection to advanced video synchronization and repair. All steps are streamlined for clarity and professional use.
 
----
+## 1. App Setup - Using Bash Script
 
-## 1. Data Collection & Transfer
-- **Power on** cameras and sensors; ensure AC power and network connection.
-- **Enable** the Global Time Sync Module.
-- **Clone** the SSH script repository:
-  ```bash
-  git clone https://github.com/VIDA-NYU/StreetAware-collection.git
-  ```
-- **Run** the SSH multi-run script:
-  ```bash
-  python ssh_multiple_run_script.py
-  ```
-- **Stop** after desired duration (Ctrl+C).
-- **Find sensor IPs** via router dashboard.
-- **Copy data** from `/Data` on each sensor using `scp` or drag-and-drop.
-- **Upload** collected data to the Research Space.
+### Clone the repository:
 
----
+```
+git clone https://github.com/VIDA-NYU/StreetAware-collection.git
+```
 
-## 2. Environment Setup
-- **Clone** the repository (if not already):
-  ```bash
-  git clone https://github.com/VIDA-NYU/StreetAware-collection.git
-  ```
-- **Frontend:**
-  ```bash
-  cd street-aware-app
-  npm install
-  ```
-- **Backend:**
-  ```bash
-  cd street-aware-service
-  python -m venv myenv
-  source myenv/bin/activate
-  pip install -r requirements.txt
-  ```
-- **Scripts:**
-  ```bash
-  cd street-aware-scripts
-  source myenv/bin/activate
-  pip install -r requirements.txt
-  ```
+### Make scripts executable:
+
+```
+chmod +x setup.sh run.sh stop.sh
+```
+
+### Run setup:
+
+```
+./setup.sh
+```
 
 ---
 
-## 3. Running the Application
-- **Frontend:**
-  ```bash
-  cd street-aware-app
-  npm run start
-  ```
-- **Backend:**
-  ```bash
-  cd street-aware-service
-  source myenv/bin/activate
-  python app.py
-  ```
-- **Scripts:**
-  ```bash
-  cd street-aware-scripts
-  source myenv/bin/activate
-  # Run scripts as needed
-  ```
-- **Alternative:** Use `setup.sh`, `run.sh`, and `stop.sh` for automated setup and control.
+## 2. App Run - Using Bash Script
+
+### Start the app:
+
+```
+./run.sh
+```
+
+### Stop the app:
+
+```
+./stop.sh
+```
+---
+
+## 3. How to Use the App
+
+### - Health Check
+
+The app includes a UI section for **health checks**. Below is a sample image indicating what the health check screen looks like. This helps verify if sensors are connected and responsive.
+
+![Health Check UI](assets/health_check.png)
+
+### - Collect Data
+
+To begin collecting sensor data:
+
+1. In the **Collect Data** section of the app UI, set a value (in seconds) for:
+   - **Total Collection Duration**
+   - **Session Timeout**
+
+2. Click the **Start SSH & Collect** button.
+
+3. To stop data collection manually before timeout, use the **Stop Job** button.
+
+![Collect Data UI](assets/collect_data.png)
+
+### - Download Data to Local Device
+
+After the collection is complete:
+
+![Download Data UI](assets/download_data.png)
+
+- Click on **Download Data (per-ip)**.
+- This will fetch sensor data to your local machine.
+
+Downloaded data is stored at:
+
+```
+street-aware-scripts/data/<current-date>
+```
+
+
+You can then upload the collected data to the **Research Space** for future analysis. [! Note: Currently the video files generated are not research ready and needs some header fixes required to be implemented. See **fix_avi_header.py** in the next section]
 
 ---
 
-## 4. Using the App
-- **Health Check:** UI section verifies sensor connectivity.
-- **Collect Data:** Set duration and session timeout, then start collection from the UI.
-- **Download Data:** Use the UI to fetch data to your local device. Data is stored in `street-aware-scripts/data/<current-date>`.
-
----
-
-## 5. Video Synchronization & Processing Toolkit
+## 4. Video Synchronization & Processing Toolkit
 
 ### Prerequisites
 - Python 3.7+
@@ -85,11 +89,6 @@ This guide covers the complete workflow for the StreetAware project, from data c
 - NumPy
 - natsort
 - ffmpeg (for AVI repair)
-
-Install dependencies:
-```bash
-pip install -r requirements.txt
-```
 
 ### Script Summary
 - **check_frame_count.py**: Analyze available frames and timeline data.
@@ -113,9 +112,8 @@ pip install -r requirements.txt
 
 ---
 
-## 6. Reference & Updates
-- For the latest documentation, see the [StreetAware Master Documentation](https://docs.google.com/document/d/1m13t26RZbAX_EhKLEvc13xLq-o2AdOja44-rMRILN5U/edit?usp=sharing).
+## 5. Reference & Updates
+For the most up-to-date documentation and updates, refer to the following Google Doc:
 
----
+👉 [StreetAware Master Documentation](https://docs.google.com/document/d/1m13t26RZbAX_EhKLEvc13xLq-o2AdOja44-rMRILN5U/edit?usp=sharing)
 
-**Efficient, professional, and ready for production workflows.**
