@@ -1,1 +1,3 @@
 paramiko
+opencv-python
+natsort

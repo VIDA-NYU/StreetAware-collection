@@ -6,6 +6,7 @@ import json
 import threading
 import stat
 from datetime import datetime
+import re
 
 # —— CONFIGURE YOUR NODES HERE —— #
 NODES = [
@@ -18,6 +19,37 @@ NODES = [
 
 # Base local directory to store downloads
 BASE_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
+def _get_latest_remote_folder(client):
+    """
+    Returns the latest timestamped folder in /media/reip/ssd/data/
+    that matches DATE_MM_DD_YYYY_TIME_HH_MM_SS_LOCAL format.
+    """
+    cmd = "ls /media/reip/ssd/data"
+    stdin, stdout, stderr = client.exec_command(cmd, timeout=5)
+    out = stdout.read().decode().strip().split("\n")
+    err = stderr.read().decode().strip()
+    if err:
+        raise RuntimeError(f"remote list command error: {err}")
+
+    pattern = re.compile(r"^DATE_(\d{2})_(\d{2})_(\d{4})_TIME_(\d{2})_(\d{2})_(\d{2})$")
+    dated_folders = []
+    for name in out:
+        m = pattern.match(name)
+        if m:
+            # convert to datetime for sorting
+            dt = datetime(
+                int(m.group(3)), int(m.group(1)), int(m.group(2)),
+                int(m.group(4)), int(m.group(5)), int(m.group(6))
+            )
+            dated_folders.append((dt, name))
+
+    if not dated_folders:
+        raise RuntimeError("no matching DATE_..._LOCAL folders found on remote")
+
+    # return the folder name with latest datetime
+    dated_folders.sort(reverse=True)
+    return dated_folders[0][1]
 
 def _get_remote_date(client):
     """
@@ -119,7 +151,7 @@ def pull_host(node, local_date_str, report_dict, lock):
 
         # 1) Ask the sensor for its own date directory name
         try:
-            remote_date_str = _get_remote_date(client)
+            remote_date_str = _get_latest_remote_folder(client)
         except Exception as e:
             raise RuntimeError(f"failed to fetch remote date: {e}")
 

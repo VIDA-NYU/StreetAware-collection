@@ -8,6 +8,7 @@ import sys
 import signal
 from threading import Event
 from job_status_tracker import update_status, clear_status, read_status
+from datetime import datetime
 
 # Dictionary to track active SSH connections
 active_connections = {}
@@ -96,10 +97,19 @@ def ssh_into_device(host, username, password, command, timeout):
             daemon=True
         ).start()
 
+
+        now = datetime.now()
+        date_label = now.strftime("DATE_%m_%d_%Y_TIME_%H_%M_%S")
+        print(f"[{host}] Sending timestamp: {date_label}", flush=True)
+
         # Wrap in shell timeout for remote kill
-        # remote_cmd = f"sh -c 'echo $$; exec timeout {timeout}s {command}'"
-        # remote_cmd = f"timeout {timeout}s sh -c '{command}'"
-        remote_cmd = f"bash -c 'echo $$; exec timeout {timeout}s bash -c \"cd software/reip-pipelines/smart-filter && python3 filter.py\"'"
+        # remote_cmd = f"bash -c 'echo $$; exec timeout {timeout}s bash -c \"cd software/reip-pipelines/smart-filter && python3 filter.py\"'"
+        remote_cmd = (
+            f"bash -c '"
+            f"export COLLECTION_TIMESTAMP=\"{date_label}\" && "
+            f"echo $$; exec timeout {timeout}s bash -c "
+            f"\"cd software/reip-pipelines/smart-filter && python3 filter.py\"'"
+        )
         _, stdout, stderr = client.exec_command(remote_cmd, timeout=timeout, get_pty=True)
         
         pid_line = None
