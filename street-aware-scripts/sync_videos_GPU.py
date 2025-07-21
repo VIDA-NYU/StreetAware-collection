@@ -510,11 +510,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 USAGE:
-  python sync_videos_GPU.py <data_path> [--output-dir OUTPUT_DIR] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS] [--rotation ROTATION]
+  python sync_videos_GPU.py <data_path> [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS] [--rotation ROTATION]
 
 OPTIONS:
   data_path           Path to data directory containing camera folders
-  --output-dir        Output directory (default: synced_output)
   --threshold         Threshold for frame selection in milliseconds (default: 50)
   --max-frames        Maximum number of frames to process (default: 300)
   --fps               Output video frames per second (default: 30)
@@ -522,7 +521,6 @@ OPTIONS:
         """
     )
     parser.add_argument("data_path", help="Path to data directory containing camera folders")
-    parser.add_argument("--output-dir", default="synced_output", help="Output directory for videos and tracking info")
     parser.add_argument("--threshold", type=int, default=50, help="Threshold for frame selection (milliseconds)")
     parser.add_argument("--max-frames", type=int, default=300, help="Maximum frames to process")
     parser.add_argument("--fps", type=int, default=30, help="Output video FPS")
@@ -534,7 +532,8 @@ OPTIONS:
     if args.rotation not in [0, 90, 180, 270]:
         print("Error: --rotation must be 0, 90, 180, or 270")
         return
-    build_mosaic_video_parallel_cuda(args.data_path, args.output_dir, args.threshold, args.max_frames, args.fps, args.rotation)
+    output_dir = "synced_output"
+    build_mosaic_video_parallel_cuda(args.data_path, output_dir, args.threshold, args.max_frames, args.fps, args.rotation)
 
 if __name__ == "__main__":
     main() 
