@@ -54,7 +54,7 @@ def cleanup_child():
 
 async def run_ssh_script(timeout: int):
     """
-    Launch the SSH script in unbuffered mode and yield each stdout line.
+    Launch the SSH script in unbuffered mode and yield each stdout line as JSON with host and line.
     """
     global current_proc
     proc = await asyncio.create_subprocess_exec(
@@ -70,7 +70,16 @@ async def run_ssh_script(timeout: int):
             line = await proc.stdout.readline()
             if not line:
                 break
-            yield line.decode(errors="replace").rstrip()
+            decoded = line.decode(errors="replace").rstrip()
+            # Try to extract host from line, e.g. lines like: [192.168.0.184] ...
+            import re
+            m = re.match(r"\s*\[(.*?)\]\s*(.*)", decoded)
+            if m:
+                host, logline = m.group(1), m.group(2)
+            else:
+                host, logline = None, decoded
+            # Send as JSON
+            yield json.dumps({"host": host, "line": logline})
     finally:
         await proc.wait()
         current_proc = None
