@@ -1,6 +1,8 @@
 street-aware-scripts/myenv/
 street-aware-scripts/data/
 street-aware-scripts/synced_output/
+street-aware-scripts/.data/
+street-aware-service/.log_cache/
 
 *.pid
 
