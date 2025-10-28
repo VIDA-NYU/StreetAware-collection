@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 Comprehensive Video Synchronization Script
-Combines logic from merge.py, render.py, fix_timestamp.py, and gst_video.py
-Updated for 4K video and 20 FPS
+Supports high-resolution video synchronization with configurable frame rate
 """
 
 import os
@@ -128,7 +127,7 @@ class OpenCVVideoWriter:
 def analyze_timestamps(ts, title, fps, n=10, debug=True, verbose=False):
     """
     Analyze timestamps to detect frame drops, duplicates, and calculate accurate periods.
-    Updated for 20 FPS default.
+    Uses configurable FPS for analysis.
     """
     title, min_t = title, np.min(ts)
     ts = ts - min_t  # Work with relative values
@@ -190,7 +189,7 @@ def correlate(x, y, exclude_outliers=True):
 
 
 class CameraReader:
-    """Enhanced camera reader with 4K support and 20 FPS analysis"""
+    """Enhanced camera reader with high-resolution support and timestamp analysis"""
     
     def __init__(self, camera_id, data_path, output_dir):
         self.camera_id = camera_id
@@ -367,7 +366,7 @@ class CameraReader:
             print(f"Warning: Insufficient gstreamer timestamps for {self.camera_id}")
             return timeline_data
         
-        # Analyze timestamps with 20 FPS
+        # Analyze timestamps (using configured FPS for the video)
         gstreamer_ts = np.array(gstreamer_timestamps)
         corrected_ts, period, (gaps, lost), (per, off) = analyze_timestamps(
             gstreamer_ts, f"{self.camera_id}_gstreamer", 20.0, debug=True, verbose=False
