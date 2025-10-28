@@ -7,3 +7,12 @@ numpy==2.2.6
 opencv-python==4.12.0.88
 scipy==1.16.0
 tqdm==4.67.1
+matplotlib
+# Optional: GPU-accelerated video encoding (H.265/H.264 with NVENC)
+# Install with: pip install gstreamer>=0.0.9
+# GitHub version: pip install git+https://github.com/3rdEyeLabs/gstreamer
+# 
+# IMPORTANT NOTES:
+# - GStreamer Python package is ONLY needed for video encoding (writing output videos)
+# - It is NOT needed for reading gstreamer_timestamps from collected data JSON files
+# - Without GStreamer, the script falls back to OpenCV CPU encoding (works but slower)
