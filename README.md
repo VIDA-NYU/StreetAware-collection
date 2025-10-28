@@ -89,26 +89,60 @@ You can then upload the collected data to the **Research Space** for future anal
 - NumPy
 - natsort
 - ffmpeg (for AVI repair)
+- GStreamer with Python bindings (optional, for GPU-accelerated encoding)
+
+Install dependencies:
+```bash
+cd street-aware-scripts
+pip install -r requirements.txt
+```
 
 ### Script Summary
+
+#### Basic Analysis
 - **check_frame_count.py**: Analyze available frames and timeline data.
   ```bash
   python check_frame_count.py <data_path>
   ```
-- **sync_videos.py**: Create a synchronized mosaic video (sequential, CPU/GPU).
+
+#### Core Synchronization Scripts
+- **video_sync.py**: **RECOMMENDED** - Comprehensive video synchronization for 4K multi-camera setup with GPU support.
   ```bash
-  python sync_videos.py <data_path> [--output OUTPUT] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS]
+  python video_sync.py <data_path> [--output-dir OUTPUT_DIR] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS] [--rotation ROTATION]
   ```
-- **sync_videos_GPU.py**: Fast, parallel CUDA mosaic video creation (GPU-accelerated, CPU fallback).
-  ```bash
-  python sync_videos_GPU.py <data_path> [--output OUTPUT] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS]
-  ```
+  Options:
+  - `data_path`: Path to data directory containing camera folders (required)
+  - `--output-dir`: Output directory for synchronized videos (default: `synchronized_output`)
+  - `--threshold`: Synchronization threshold in milliseconds (default: 100)
+  - `--max-frames`: Maximum number of frames to process (optional)
+  - `--fps`: Output video frame rate (default: 20)
+  - `--rotation`: Rotation angle: 0, 90, 180, or 270 degrees (default: 0)
+
+
+#### Video Repair
 - **fix_avi_header.py**: Repair corrupted AVI headers (requires ffmpeg).
   ```bash
   python fix_avi_header.py <data_path> [--backup] [--cameras CAM1 CAM2 ...] [--test-only] [--verify-only] [--analyze-only]
   ```
 
 **Tip:** All scripts support `--help` for option details.
+
+### Output Structure
+
+All synchronization scripts create organized output folders:
+
+```
+synchronized_output/              # or your specified --output-dir
+├── per_camera/                   # Individual synced videos per camera
+│   ├── 192.168.0.108_0_enhanced_sync.mp4
+│   ├── 192.168.0.108_2_enhanced_sync.mp4
+│   ├── 192.168.0.122_0_enhanced_sync.mp4
+│   └── ...
+└── mosaic/                       # Mosaic video and metadata
+    ├── mosaic_enhanced_sync.mp4
+    ├── enhanced_sync_tracking.json
+    └── master_timeline_enhanced.json
+```
 
 ---
 
