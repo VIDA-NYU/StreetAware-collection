@@ -8,13 +8,10 @@ import stat
 from datetime import datetime
 import re
 
-# —— CONFIGURE YOUR NODES HERE —— #
-NODES = [
-    {"host": "192.168.0.184", "username": "reip", "password": "reip"},
-    {"host": "192.168.0.122", "username": "reip", "password": "reip"},
-    {"host": "192.168.0.108", "username": "reip", "password": "reip"},
-    {"host": "192.168.0.227", "username": "reip", "password": "reip"},
-]
+from config import get_sensor_config
+
+# Get nodes from config
+NODES = get_sensor_config()
 
 
 # Base local directory to store downloads
@@ -114,26 +111,28 @@ def _recursive_get_with_progress(sftp, remote_path, local_path, progress_cb):
 
         sftp.get(remote_path, local_path, callback=file_cb)
 
-def pull_host(node, local_date_str, report_dict, lock):
+def pull_host(node, local_date_str, report_dict, lock, manual_folder=None, is_manual=False):
     """
-    Download one node’s data. Steps:
-      1) SSH → get that sensor’s own date folder name
+    Download one node's data. Steps:
+      1) SSH → get that sensor's own date folder name (or use manual_folder)
       2) Build remote_base = /media/reip/ssd/data/<remote_date_str>
       3) Compute total bytes, then recursively SFTP—reporting PROGRESS only on each 1% boundary
-      4) Write to local folder data/<local_date_str>/<host>/…
+      4) Write to local folder data/<local_date_str>/<host>/… (or manual/<host>/<folder> if manual)
     """
     host = node["host"]
+    port = node.get("port", 22)
     username = node["username"]
     password = node["password"]
+    display_name = node.get("display_name") or f"{host}:{port}"
 
     # Quick TCP check on port 22
     try:
-        sock = socket.create_connection((host, 22), timeout=5)
+        sock = socket.create_connection((host, port), timeout=5)
         sock.close()
     except Exception as e:
         with lock:
-            report_dict[host] = {"status": "error", "error": f"tcp‐fail: {e}"}
-        print(f"COMPLETE {host} ERROR", flush=True)
+            report_dict[display_name] = {"status": "error", "error": f"tcp‐fail: {e}"}
+        print(f"COMPLETE {display_name} ERROR", flush=True)
         return
 
     try:
@@ -142,6 +141,7 @@ def pull_host(node, local_date_str, report_dict, lock):
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(
             hostname=host,
+            port=port,
             username=username,
             password=password,
             timeout=10,
@@ -149,14 +149,24 @@ def pull_host(node, local_date_str, report_dict, lock):
             auth_timeout=10,
         )
 
-        # 1) Ask the sensor for its own date directory name
-        try:
-            remote_date_str = _get_latest_remote_folder(client)
-        except Exception as e:
-            raise RuntimeError(f"failed to fetch remote date: {e}")
+        # 1) Ask the sensor for its own date directory name (or use manual_folder)
+        if manual_folder:
+            remote_date_str = manual_folder
+        else:
+            try:
+                remote_date_str = _get_latest_remote_folder(client)
+            except Exception as e:
+                raise RuntimeError(f"failed to fetch remote date: {e}")
 
         remote_base = f"/media/reip/ssd/data/{remote_date_str}"
-        local_base = os.path.join(BASE_DATA_DIR, local_date_str, host)
+        safe_name = display_name.replace('/', '_').replace(':', '_')
+        
+        if is_manual:
+            # Manual downloads go to manual/<sensor>/<folder>
+            local_base = os.path.join(BASE_DATA_DIR, "manual", safe_name, remote_date_str)
+        else:
+            # Auto downloads go to <timestamp>/<sensor>
+            local_base = os.path.join(BASE_DATA_DIR, local_date_str, safe_name)
 
         # Open SFTP
         sftp = client.open_sftp()
@@ -168,19 +178,26 @@ def pull_host(node, local_date_str, report_dict, lock):
         if total_bytes == 0:
             os.makedirs(local_base, exist_ok=True)
             with lock:
-                report_dict[host] = {
+                if is_manual:
+                    path_str = f"data/manual/{safe_name}/{remote_date_str}"
+                else:
+                    path_str = f"data/{local_date_str}/{safe_name}"
+                report_dict[display_name] = {
                     "status": "downloaded",
-                    "path": f"data/{local_date_str}/{host}",
+                    "path": path_str,
                     "bytes": 0,
                     "total": 0,
                 }
-            print(f"COMPLETE {host} 0", flush=True)
-            sftp.close()
-            client.close()
-            return
+                print(f"COMPLETE {display_name} 0", flush=True)
+                sftp.close()
+                client.close()
+                return
 
         downloaded = 0
         last_percent = -1  # track the last percent we logged
+        
+        # Send initial progress at 0%
+        print(f"PROGRESS {display_name} 0 {total_bytes}", flush=True)
 
         # 3) As chunks arrive, update downloaded, compute percent, print only on new percent
         def progress_cb(chunk_bytes):
@@ -189,7 +206,7 @@ def pull_host(node, local_date_str, report_dict, lock):
             percent = int((downloaded * 100) / total_bytes)
             if percent > last_percent:
                 last_percent = percent
-                print(f"PROGRESS {host} {downloaded} {total_bytes}", flush=True)
+                print(f"PROGRESS {display_name} {downloaded} {total_bytes}", flush=True)
 
         # Ensure local folder exists
         os.makedirs(local_base, exist_ok=True)
@@ -200,36 +217,62 @@ def pull_host(node, local_date_str, report_dict, lock):
 
         # 4) Mark complete in the shared report dictionary
         with lock:
-            report_dict[host] = {
+            if is_manual:
+                path_str = f"data/manual/{safe_name}/{remote_date_str}"
+            else:
+                path_str = f"data/{local_date_str}/{safe_name}"
+            report_dict[display_name] = {
                 "status": "downloaded",
-                "path": f"data/{local_date_str}/{host}",
+                "path": path_str,
                 "bytes": total_bytes,
                 "total": total_bytes,
             }
 
-        print(f"COMPLETE {host} {local_base}", flush=True)
+            print(f"COMPLETE {display_name} {local_base}", flush=True)
 
     except Exception as e:
         with lock:
-            report_dict[host] = {"status": "error", "error": str(e)}
-        print(f"COMPLETE {host} ERROR", flush=True)
+            report_dict[display_name] = {"status": "error", "error": str(e)}
+        # Include the error message so the UI can show it inline
+        msg = str(e).replace("\n", " ")
+        print(f"COMPLETE {display_name} ERROR {msg}", flush=True)
 
 def main():
-    # Use your local system date to name the top‐level folder
-    local_date_str = datetime.now().strftime("%b%d%Y")
-    date_folder = os.path.join(BASE_DATA_DIR, local_date_str)
-    os.makedirs(date_folder, exist_ok=True)
+    import sys
+    # Check if manual mode with JSON config
+    manual_config = None
+    if len(sys.argv) > 1 and sys.argv[1] == "--manual":
+        # Expect JSON on stdin with format: {"Sensor 184": "DATE_10_02_2025_TIME_14_30_00", ...}
+        import json
+        manual_config = json.loads(sys.stdin.read())
+    
+    # Use numeric timestamp format: YYYYMMDD_HHMMSS
+    now = datetime.now()
+    local_date_str = now.strftime("%Y%m%d_%H%M%S")
+    
+    is_manual = manual_config is not None
+    
+    if not is_manual:
+        date_folder = os.path.join(BASE_DATA_DIR, local_date_str)
+        os.makedirs(date_folder, exist_ok=True)
 
     report = {}
     lock = threading.Lock()
     threads = []
 
-    # Launch one thread per node, each will:
-    #   • SSH → get remote_date_str
-    #   • SFTP remote_base → local folder under local_date_str
+    # Launch one thread per node
     for node in NODES:
+        display_name = node.get("display_name") or f"{node['host']}:{node.get('port', 22)}"
+        manual_folder = manual_config.get(display_name) if manual_config else None
+        
+        # Skip sensors not in manual config if in manual mode
+        if is_manual and manual_folder is None:
+            continue
+            
         t = threading.Thread(
-            target=pull_host, args=(node, local_date_str, report, lock), daemon=True
+            target=pull_host, 
+            args=(node, local_date_str, report, lock, manual_folder, is_manual), 
+            daemon=True
         )
         t.start()
         threads.append(t)

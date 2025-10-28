@@ -12,17 +12,24 @@
 
 #!/bin/bash
 
+MODE="real"
+case "${1:-}" in
+  mock|--mock|-m)
+    MODE="mock"
+    ;;
+esac
+
 # Stop existing processes if running
 ./stop.sh 2>/dev/null
 
-echo "Starting React App..."
-nohup bash -c "cd street-aware-app && npm run start" > react.log 2>&1 &
+echo "Starting React App (mode: $MODE)..."
+SENSOR_MODE="$MODE" nohup bash -c "cd street-aware-app && npm run start" > react.log 2>&1 &
 sleep 3
 lsof -ti :4000 > react.pid
 
-echo "Starting FastAPI App..."
-nohup bash -c "cd street-aware-service && source myenv/bin/activate && python app.py" > fastapi.log 2>&1 &
+echo "Starting FastAPI App (mode: $MODE)..."
+SENSOR_MODE="$MODE" nohup bash -c "cd street-aware-service && source myenv/bin/activate && python app.py" > fastapi.log 2>&1 &
 sleep 1
 lsof -ti :8080 > fastapi.pid
 
-echo "✅ Services started. Use ./stop.sh to terminate them."
+echo "✅ Services started in $MODE mode. Use ./stop.sh to terminate them."
