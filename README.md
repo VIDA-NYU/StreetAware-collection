@@ -88,8 +88,10 @@ You can then upload the collected data to the **Research Space** for future anal
 - OpenCV (with Python bindings)
 - NumPy
 - natsort
+- matplotlib (for timestamp analysis)
 - ffmpeg (for AVI repair)
 - GStreamer with Python bindings (optional, for GPU-accelerated encoding)
+- CUDA-enabled GPU (optional, for GPU-accelerated processing)
 
 Install dependencies:
 ```bash
@@ -106,17 +108,61 @@ pip install -r requirements.txt
   ```
 
 #### Core Synchronization Scripts
-- **video_sync.py**: **RECOMMENDED** - Comprehensive video synchronization for 4K multi-camera setup with GPU support.
+- **sync_video.py**: **RECOMMENDED** - Enhanced video synchronization with timestamp analysis and correction for 4K multi-camera setup with GPU support.
+  
+  **Quick Start Example:**
   ```bash
-  python video_sync.py <data_path> [--output-dir OUTPUT_DIR] [--threshold THRESHOLD] [--max-frames MAX_FRAMES] [--fps FPS] [--rotation ROTATION]
+  # Basic usage with default settings
+  python sync_video.py /path/to/data
+  
+  # Custom output directory and processing first 100 frames
+  python sync_video.py /path/to/data --output-dir my_output --max-frames 100
+  
+  # Full example with all options
+  python sync_video.py /path/to/data --output-dir synced_videos --threshold 50 --max-frames 300 --fps 20 --rotation 0
   ```
-  Options:
+  
+  **Command Options:**
   - `data_path`: Path to data directory containing camera folders (required)
-  - `--output-dir`: Output directory for synchronized videos (default: `synchronized_output`)
-  - `--threshold`: Synchronization threshold in milliseconds (default: 100)
-  - `--max-frames`: Maximum number of frames to process (optional)
+  - `--output-dir`: Output directory for synchronized videos (default: `synced_output_enhanced`)
+  - `--threshold`: Synchronization threshold in milliseconds (default: 50)
+  - `--max-frames`: Maximum number of frames to process (default: 300)
   - `--fps`: Output video frame rate (default: 20)
   - `--rotation`: Rotation angle: 0, 90, 180, or 270 degrees (default: 0)
+  
+  **Enhanced Features:**
+  - Integrates `fix_timestamp.py` timestamp analysis logic
+  - Detects and corrects frame drops and timing irregularities
+  - Uses cross-timestamp correlation for accurate threshold conversion
+  - Provides robust period calculation and frame ID correction
+  - Handles network delays and clock drift automatically
+  - Two-step timestamp conversion: GStreamer → Python → Global
+  - 2-frame buffer window logic for optimal frame selection
+  - Automatic GPU detection and fallback to CPU processing
+  
+  **Camera Configuration:**
+  The script processes multiple cameras by default. Each camera is identified by an IP address and camera number (format: `IP_ADDRESS_CAMERA_NUMBER`, e.g., `192.168.0.108_0`).
+  
+  To configure which cameras to process:
+  1. Open `sync_video.py` in a text editor
+  2. Locate the `cameras` list in the `build_synchronized_videos_enhanced()` function
+  3. Modify the list to include your camera IDs (format: `IP_ADDRESS_CAMERA_NUMBER`)
+  
+  **Expected Data Structure:**
+  Your data directory should be organized as follows:
+  ```
+  <data_path>/
+  ├── <IP_ADDRESS_1>/
+  │   ├── video/
+  │   │   ├── <CAMERA_NUM>_*.avi
+  │   │   └── ...
+  │   └── time/
+  │       ├── <CAMERA_NUM>_*_*.json
+  │       └── ...
+  ├── <IP_ADDRESS_2>/
+  │   └── ...
+  └── ...
+  ```
 
 
 #### Video Repair
@@ -129,20 +175,28 @@ pip install -r requirements.txt
 
 ### Output Structure
 
-All synchronization scripts create organized output folders:
+The `sync_video.py` script creates organized output folders:
 
 ```
-synchronized_output/              # or your specified --output-dir
-├── per_camera/                   # Individual synced videos per camera
-│   ├── 192.168.0.108_0_enhanced_sync.mp4
-│   ├── 192.168.0.108_2_enhanced_sync.mp4
-│   ├── 192.168.0.122_0_enhanced_sync.mp4
-│   └── ...
-└── mosaic/                       # Mosaic video and metadata
-    ├── mosaic_enhanced_sync.mp4
-    ├── enhanced_sync_tracking.json
-    └── master_timeline_enhanced.json
+<output_dir>/                      # Default: synced_output_enhanced
+├── per_camera/                    # Individual synced videos per camera
+│   ├── <IP_ADDRESS>_<CAMERA_NUM>_enhanced_sync.mp4
+│   ├── <IP_ADDRESS>_<CAMERA_NUM>_enhanced_sync.mp4
+│   └── ...                        # One video per configured camera
+└── mosaic/                        # Mosaic video and metadata
+    ├── mosaic_enhanced_sync.mp4   # Grid mosaic (info panel + camera feeds)
+    ├── enhanced_sync_tracking.json # Detailed frame synchronization metadata
+    └── master_timeline_enhanced.json # Master timeline with global timestamps
 ```
+
+**Output Files:**
+- **Mosaic Video**: Grid layout with info panel showing global timestamp, time, and frame number, plus all camera feeds arranged in a grid
+- **Per-Camera Videos**: Individual synchronized videos for each configured camera (named as `<IP_ADDRESS>_<CAMERA_NUM>_enhanced_sync.mp4`)
+- **Tracking JSON**: Detailed metadata including:
+  - Synchronization parameters (threshold, conversion factors, correlation data)
+  - Frame-by-frame synchronization info (which frames were used, distances, black frame reasons)
+  - Final statistics (synchronization rate, camera utilization)
+- **Master Timeline**: Global timestamps used for synchronization
 
 ---
 
