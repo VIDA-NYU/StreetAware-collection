@@ -7,3 +7,4 @@ numpy==2.2.6
 opencv-python==4.12.0.88
 scipy==1.16.0
 tqdm==4.67.1
+paramiko
