@@ -11,6 +11,7 @@ from pathlib import Path
 from natsort import natsorted
 import shutil
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 
 # Global timestamp conversion constants (from analysis)
 # 1 global unit ≈ 5/6 milliseconds
@@ -102,7 +103,7 @@ def rotate_frame(frame, angle, use_gpu=True):
     else:
         return rotate_frame_cpu(frame, angle)
 
-def analyze_timestamps(ts, title, fps, n=10, debug=True, verbose=False):
+def analyze_timestamps(ts, title, fps, n=10, debug=False, verbose=False):
     """
     Analyze timestamps to detect frame drops, duplicates, and calculate accurate periods.
     Based on fix_timestamp.py logic.
@@ -138,13 +139,7 @@ def analyze_timestamps(ts, title, fps, n=10, debug=True, verbose=False):
     lost = ids[gaps + 1] - ids[gaps] - 1
 
     if debug:
-        print(f"\nAnalyzing {title} timestamps...")
-        print(f"FPS: {fps}")
-        print(f"Period: {per * 1000:.2f} ms")
-        print(f"Offset: {off * 1000:.2f} ms")
-        print(f"Gaps: {len(gaps)}")
-        if len(lost):
-            print(f"Lost frames: {lost}")
+        print(f"  ✓ {title}: Period={per * 1000:.2f}ms, Gaps={len(gaps)}, Lost={sum(lost) if len(lost) > 0 else 0}")
 
     return ids * per, per, (gaps, lost), (per, off)
 
@@ -289,7 +284,7 @@ class CameraReader:
         self.load_next_frame()
         self.load_next_frame()
         
-        print(f"Initialized {camera_id}: {len(self.timeline)} timestamps, {len(self.video_files)} video files (GPU: {use_gpu})")
+        print(f"  ✓ Loaded {len(self.timeline)} timestamps, {len(self.video_files)} videos")
     
     def preprocess_timeline_files(self):
         """Preprocess and merge JSON files like fix_timestamp.py."""
@@ -310,7 +305,7 @@ class CameraReader:
             print(f"Using existing merged file: {merged_file}")
             return True
         
-        print(f"Creating merged file for {self.camera_id}...")
+        print(f"  → Creating merged timeline for {self.camera_id}...")
         
         # Collect all JSON files for this camera
         pattern = f"{self.cam_num}_*_*.json"
@@ -336,7 +331,7 @@ class CameraReader:
         try:
             with open(merged_file, 'w') as f:
                 json.dump(merged_data, f, indent=4)
-            print(f"Created merged file: {merged_file} with {len(merged_data)} entries")
+            print(f"  ✓ Merged {len(merged_data)} entries")
             return True
         except Exception as e:
             print(f"Error saving merged file: {e}")
@@ -353,7 +348,7 @@ class CameraReader:
             print(f"Merged file not found: {merged_file}")
             return False
         
-        print(f"Sorting timeline data for {self.camera_id}...")
+        print(f"  → Sorting timeline for {self.camera_id}...")
         
         try:
             # Load merged data
@@ -371,7 +366,7 @@ class CameraReader:
             with open(merged_file, 'w') as f:
                 json.dump(sorted_data, f, indent=4)
             
-            print(f"Sorted timeline data: {len(sorted_data)} entries")
+            print(f"  ✓ Sorted {len(sorted_data)} entries")
             return True
         except Exception as e:
             print(f"Error sorting timeline data: {e}")
@@ -441,7 +436,7 @@ class CameraReader:
         # Analyze timestamps
         gstreamer_ts = np.array(gstreamer_timestamps)
         corrected_ts, period, (gaps, lost), (per, off) = analyze_timestamps(
-            gstreamer_ts, f"{self.camera_id}_gstreamer", 25.0, debug=True, verbose=False
+            gstreamer_ts, f"{self.camera_id}", 25.0, debug=True, verbose=False
         )
         
         # Apply corrections to timeline
@@ -457,7 +452,6 @@ class CameraReader:
             
             corrected_timeline.append(entry)
         
-        print(f"Applied timestamp corrections to {self.camera_id}: {len(gaps)} gaps, {sum(lost) if lost.size > 0 else 0} lost frames")
         return corrected_timeline
     
     def get_video_files(self):
@@ -624,7 +618,6 @@ def create_enhanced_master_timeline(all_camera_readers, fps=30):
     """
     Create enhanced master timeline using timestamp analysis and correlation.
     """
-    print("Creating enhanced master timeline with timestamp analysis...")
     
     # Collect all timeline data for correlation analysis
     all_timeline_data = []
@@ -663,15 +656,14 @@ def create_enhanced_master_timeline(all_camera_readers, fps=30):
     start_time = min(all_global_timestamps)
     end_time = max(all_global_timestamps)
     
-    print(f"Global timeline range: {start_time} to {end_time}")
-    print(f"Total duration: {end_time - start_time} global units")
-    print(f"Duration in seconds: {(end_time - start_time) * seconds_per_global_unit:.2f}")
+    duration_sec = (end_time - start_time) * seconds_per_global_unit
+    print(f"Timeline range: {start_time} to {end_time} ({duration_sec:.2f} seconds)")
     
     # Calculate frame interval in global units
     frame_interval_sec = 1.0 / fps
     frame_interval_global = frame_interval_sec / seconds_per_global_unit
     
-    print(f"Frame interval: {frame_interval_global:.2f} global units ({frame_interval_sec*1000:.2f} ms)")
+    print(f"Frame interval: {frame_interval_sec*1000:.2f} ms at {fps} FPS")
     
     # Create master timeline with regular intervals
     master_timeline = []
@@ -680,7 +672,7 @@ def create_enhanced_master_timeline(all_camera_readers, fps=30):
         master_timeline.append(int(current_time))
         current_time += frame_interval_global
     
-    print(f"Created enhanced master timeline with {len(master_timeline)} points")
+    print(f"✓ Created master timeline with {len(master_timeline)} frames")
     
     return master_timeline, seconds_per_global_unit
 
@@ -735,14 +727,17 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
     os.makedirs(per_camera_dir, exist_ok=True)
     os.makedirs(mosaic_dir, exist_ok=True)
     
-    print("\nStep 1: Initializing camera readers with GPU acceleration")
+    print("\n" + "="*60)
+    print("STEP 1/6: Initializing Camera Readers")
+    print("="*60)
     camera_readers = []
-    for camera_id in cameras:
-        print(f"Initializing {camera_id}")
+    for camera_id in tqdm(cameras, desc="Loading cameras", unit="camera"):
         reader = CameraReader(camera_id, data_path, output_dir, use_gpu=use_gpu)
         camera_readers.append(reader)
     
-    print("\nStep 2: Creating enhanced master timeline")
+    print("\n" + "="*60)
+    print("STEP 2/6: Creating Master Timeline")
+    print("="*60)
     master_timeline, seconds_per_global_unit = create_enhanced_master_timeline(camera_readers, fps)
     if max_frames:
         master_timeline = master_timeline[:max_frames]
@@ -800,7 +795,9 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
         "frame_sequence": []
     }
     
-    print("\nStep 3: Determining video dimensions")
+    print("\n" + "="*60)
+    print("STEP 3/6: Determining Video Dimensions")
+    print("="*60)
     sample_frame = None
     for reader in camera_readers:
         if reader.right_frame is not None:
@@ -816,7 +813,9 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
     height, width = sample_frame_rot.shape[:2]
     print(f"Video dimensions after rotation: {width}x{height}")
     
-    print("\nStep 4: Creating GPU-accelerated video writers")
+    print("\n" + "="*60)
+    print("STEP 4/6: Creating Video Writers")
+    print("="*60)
     # Mosaic layout: 3x3 grid
     mosaic_width = width * 3
     mosaic_height = height * 3
@@ -852,8 +851,13 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
     
     black_frame = np.zeros((height, width, 3), dtype=np.uint8)
     
-    print(f"\nStep 5: Processing {len(master_timeline)} frames with GPU acceleration")
-    print(f"Using threshold: {threshold_ms} ms = {threshold_global_units:.2f} global units")
+    print("\n" + "="*60)
+    print(f"STEP 5/6: Processing {len(master_timeline)} Frames")
+    print("="*60)
+    print(f"Threshold: {threshold_ms} ms ({threshold_global_units:.2f} global units)")
+    print(f"GPU Acceleration: {'ENABLED' if use_gpu else 'DISABLED'}")
+    print(f"Output FPS: {fps}")
+    print("="*60 + "\n")
     
     frame_count = 0
     stats = {
@@ -863,9 +867,11 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
         'camera_stats': {camera_id: {'actual': 0, 'black': 0} for camera_id in cameras}
     }
     
+    # Create progress bar
+    pbar = tqdm(total=len(master_timeline), desc="Processing frames", unit="frame", 
+                bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]')
+    
     for global_timestamp in master_timeline:
-        if frame_count % 30 == 0:
-            print(f"Progress: {frame_count}/{len(master_timeline)} ({frame_count/len(master_timeline)*100:.1f}%) [GPU: {use_gpu}]")
         
         # Advance all camera buffers to current timestamp
         for reader in camera_readers:
@@ -944,9 +950,17 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
         mosaic_video.write(mosaic_frame)
         frame_count += 1
         stats['total_frames'] += 1
+        
+        # Update progress bar
+        pbar.update(1)
+    
+    # Close progress bar
+    pbar.close()
     
     # Step 6: Clean up and save results
-    print("\nStep 6: Cleaning up and saving results...")
+    print("\n" + "="*60)
+    print("STEP 6/6: Saving Results and Cleanup")
+    print("="*60)
     mosaic_video.release()
     for writer in camera_writers.values():
         writer.release()
@@ -972,7 +986,6 @@ def build_synchronized_videos_gpu(data_path, output_dir, threshold_ms=50, max_fr
         }
     }
     
-    print("\nStep 7: Saving metadata and statistics")
     tracking_file = os.path.join(mosaic_dir, 'gpu_sync_tracking.json')
     with open(tracking_file, 'w') as f:
         json.dump(frame_tracking, f, indent=2)
