@@ -15,12 +15,19 @@ import cv2
 from pathlib import Path
 from natsort import natsorted
 import matplotlib.pyplot as plt
+from concurrent.futures import ThreadPoolExecutor
 
 # Video parameters for 4K
 W, H, FPS = 3840, 2160, 20  # 4K resolution, 20 FPS
 RADIO_FREQ = 1200  # global units per second
 DEFAULT_BITRATE = 50000  # kbps for 4K
+VERBOSE = False
 
+# Allow OpenCV to leverage all CPU threads when possible
+try:
+    cv2.setNumThreads(max(1, os.cpu_count() or 1))
+except AttributeError:
+    pass
 # GStreamer imports (if available)
 try:
     from gstreamer import Gst, GstApp, GstContext, GstPipeline
@@ -61,13 +68,21 @@ class GstVideoWriter:
         assert codec in ["h264", "h265"], f"Unsupported codec {codec}"
 
         if isinstance(fps, float):
-            self.caps = f"video/x-raw,format={format},width={width},height={height},framerate=(fraction){int(round(fps * 100_000))}/100000"
+            fps_caps = f"(fraction){int(round(fps * 100_000))}/100000"
         else:
-            self.caps = f"video/x-raw,format={format},width={width},height={height},framerate={fps}/1"
+            fps_caps = f"{fps}/1"
 
-        self.command = f"appsrc emit-signals=True is-live=False caps={self.caps} ! queue ! videoconvert ! " \
-                      f"nv{codec}enc preset=hq bitrate={bitrate} rc-mode={'vbr' if variable else 'cbr'} " \
-                      f"gop-size=45 cuda-device-id={gpu} ! {codec}parse ! matroskamux ! filesink location={self.temp_filename}"
+        self.input_caps = f"video/x-raw,format={format},width={width},height={height},framerate={fps_caps}"
+        # Force conversion to NV12 before feeding NVENC to avoid caps negotiation issues
+        self.encoder_caps = f"video/x-raw,format=NV12,width={width},height={height},framerate={fps_caps}"
+
+        self.command = (
+            f"appsrc emit-signals=True is-live=False caps={self.input_caps} ! "
+            f"queue ! videoconvert ! {self.encoder_caps} ! "
+            f"nv{codec}enc preset=hq bitrate={bitrate} rc-mode={'vbr' if variable else 'cbr'} "
+            f"gop-size=45 cuda-device-id={gpu} ! {codec}parse ! matroskamux ! "
+            f"filesink location={self.temp_filename}"
+        )
         
         self.pts = 0  # frame timestamp
         self.duration = 10**9 / fps  # frame duration
@@ -81,7 +96,7 @@ class GstVideoWriter:
         self.appsrc.set_property("format", Gst.Format.TIME)
         self.appsrc.set_property("block", True)
         self.appsrc.set_property("max-bytes", 200_000_000)
-        self.appsrc.set_caps(Gst.Caps.from_string(self.caps))
+        self.appsrc.set_caps(Gst.Caps.from_string(self.input_caps))
 
     def write(self, frame):
         gst_buffer = utils.ndarray_to_gst_buffer(frame)
@@ -122,6 +137,22 @@ class OpenCVVideoWriter:
 
     def close(self):
         self.writer.release()
+
+
+def apply_rotation_if_needed(frame, rotation):
+    """Rotate frame based on requested output orientation."""
+    if rotation == 90:
+        return cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    if rotation == 180:
+        return cv2.rotate(frame, cv2.ROTATE_180)
+    if rotation == 270:
+        return cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    return frame
+
+
+def debug_log(message):
+    if VERBOSE:
+        print(message)
 
 
 def analyze_timestamps(ts, title, fps, n=10, debug=True, verbose=False):
@@ -408,9 +439,9 @@ class CameraReader:
         """Load the next frame from timeline using 2-frame window logic."""
         if self.timeline_index < len(self.timeline):
             frame_hint = self.timeline[self.timeline_index]
-            print(f"{self.camera_id}: load_next_frame at timeline index "
-                  f"{self.timeline_index + 1}/{len(self.timeline)} "
-                  f"(frame_id={frame_hint.get('frame_id')})")
+            debug_log(f"{self.camera_id}: load_next_frame at timeline index "
+                      f"{self.timeline_index + 1}/{len(self.timeline)} "
+                      f"(frame_id={frame_hint.get('frame_id')})")
         while self.timeline_index < len(self.timeline):
             frame_info = self.timeline[self.timeline_index]
             frame = self.get_frame_from_video_segments(frame_info)
@@ -439,7 +470,7 @@ class CameraReader:
             if self.current_video is None or self.current_video_key != video_key:
                 if self.current_video is not None:
                     self.current_video.release()
-                print(f"{self.camera_id}: Opening {video_name} (index {target_file_index}) for frame lookup")
+                debug_log(f"{self.camera_id}: Opening {video_name} (index {target_file_index}) for frame lookup")
                 self.current_video = cv2.VideoCapture(str(video_file))
                 self.current_video_key = video_key
             
@@ -456,7 +487,7 @@ class CameraReader:
             
             if ret:
                 if local_frame_id < 5:
-                    print(f"  {self.camera_id}: Global frame {frame_id} -> {video_name} frame {local_frame_id}")
+                    debug_log(f"  {self.camera_id}: Global frame {frame_id} -> {video_name} frame {local_frame_id}")
                 return frame
             else:
                 print(f"  {self.camera_id}: Failed to read frame {local_frame_id} from {video_name}")
@@ -476,8 +507,8 @@ class CameraReader:
             if self.current_video is None or self.current_video_key != video_key:
                 if self.current_video is not None:
                     self.current_video.release()
-                print(f"{self.camera_id}: Opening {video_name} "
-                      f"({idx + 1}/{total_videos}) for frame lookup")
+                debug_log(f"{self.camera_id}: Opening {video_name} "
+                          f"({idx + 1}/{total_videos}) for frame lookup")
                 self.current_video = cv2.VideoCapture(str(video_file))
                 self.current_video_key = video_key
             
@@ -486,10 +517,10 @@ class CameraReader:
                 continue
             
             if video_key not in self.video_frame_counts:
-                print(f"{self.camera_id}: Counting frames in {video_name}...")
+                debug_log(f"{self.camera_id}: Counting frames in {video_name}...")
                 total_frames = int(self.current_video.get(cv2.CAP_PROP_FRAME_COUNT))
                 self.video_frame_counts[video_key] = total_frames
-                print(f"{self.camera_id}: {video_name} has {total_frames} frames")
+                debug_log(f"{self.camera_id}: {video_name} has {total_frames} frames")
             else:
                 total_frames = self.video_frame_counts[video_key]
             
@@ -503,7 +534,7 @@ class CameraReader:
                 
                 if ret:
                     if local_frame_id < 5:
-                        print(f"  {self.camera_id}: Global frame {frame_id} -> {video_name} frame {local_frame_id}")
+                        debug_log(f"  {self.camera_id}: Global frame {frame_id} -> {video_name} frame {local_frame_id}")
                     return frame
                 else:
                     print(f"  {self.camera_id}: Failed to read frame {local_frame_id} from {video_name}")
@@ -663,9 +694,19 @@ def create_master_timeline(camera_readers, fps=20):
     return master_timeline, seconds_per_global_unit
 
 
-def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frames=None, fps=20, rotation=0):
+def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frames=None, fps=20, rotation=0,
+                              workers=None, nvenc_camera_limit=2):
     """Build synchronized videos using the comprehensive approach."""
     print("Building Synchronized Videos with Comprehensive Analysis")
+    
+    # Determine worker usage
+    if workers is None:
+        workers = min(max(1, (os.cpu_count() or 4)), 32)
+    else:
+        workers = max(1, workers)
+    use_thread_pool = workers > 1
+    print(f"Using up to {workers} worker thread(s) for parallel stages")
+    executor = ThreadPoolExecutor(max_workers=workers) if use_thread_pool else None
     
     # Create output directories
     per_camera_dir = os.path.join(output_dir, "per_camera")
@@ -681,43 +722,65 @@ def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frame
     
     if not camera_dirs:
         print("No camera directories found!")
+        if executor:
+            executor.shutdown(wait=True)
         return
     
     # Create camera readers
     print("\nStep 1: Initializing camera readers with enhanced timeline analysis")
     camera_readers = []
     cameras = []
+    camera_ids = []
     
     for camera_dir in camera_dirs:
-        # Dynamically discover available camera numbers by checking time directory
         time_path = os.path.join(data_path, camera_dir, "time")
         if os.path.exists(time_path):
-            # Find all unique camera numbers from timestamp files
             timestamp_files = glob.glob(os.path.join(time_path, "*_*_*.json"))
             cam_numbers = set()
             for file_path in timestamp_files:
                 filename = os.path.basename(file_path)
                 parts = filename.split('_')
                 if len(parts) >= 3:
-                    cam_numbers.add(parts[0])  # First part is camera number
+                    cam_numbers.add(parts[0])
             
-            print(f"Found camera numbers for {camera_dir}: {sorted(cam_numbers)}")
-            
-            for cam_num in sorted(cam_numbers):
+            sorted_nums = sorted(cam_numbers)
+            if sorted_nums:
+                print(f"Found camera numbers for {camera_dir}: {sorted_nums}")
+            for cam_num in sorted_nums:
                 camera_id = f"{camera_dir}_{cam_num}"
-                print(f"Initializing {camera_id}")
-                try:
-                    reader = CameraReader(camera_id, data_path, output_dir)
-                    if reader.timeline:  # Only add if timeline was loaded successfully
-                        camera_readers.append(reader)
-                        cameras.append(camera_id)
-                except Exception as e:
-                    print(f"Error initializing {camera_id}: {e}")
+                camera_ids.append(camera_id)
         else:
             print(f"Time directory not found for {camera_dir}")
     
+    def _init_reader(camera_id):
+        print(f"Initializing {camera_id}")
+        try:
+            reader = CameraReader(camera_id, data_path, output_dir)
+            return reader
+        except Exception as e:
+            print(f"Error initializing {camera_id}: {e}")
+        return None
+    
+    if executor:
+        future_pairs = []
+        for camera_id in camera_ids:
+            future_pairs.append((camera_id, executor.submit(_init_reader, camera_id)))
+        for camera_id, future in future_pairs:
+            reader = future.result()
+            if reader and reader.timeline:
+                camera_readers.append(reader)
+                cameras.append(reader.camera_id)
+    else:
+        for camera_id in camera_ids:
+            reader = _init_reader(camera_id)
+            if reader and reader.timeline:
+                camera_readers.append(reader)
+                cameras.append(reader.camera_id)
+    
     if not camera_readers:
         print("No camera readers initialized successfully!")
+        if executor:
+            executor.shutdown(wait=True)
         return
     
     print("\nStep 2: Creating enhanced master timeline")
@@ -767,18 +830,23 @@ def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frame
     
     if sample_frame is None:
         print("Error: Could not find any sample frame to determine video dimensions")
+        if executor:
+            executor.shutdown(wait=True)
         return
     
     # Apply rotation to sample frame to get correct output size
-    if rotation == 90:
-        sample_frame = cv2.rotate(sample_frame, cv2.ROTATE_90_CLOCKWISE)
-    elif rotation == 180:
-        sample_frame = cv2.rotate(sample_frame, cv2.ROTATE_180)
-    elif rotation == 270:
-        sample_frame = cv2.rotate(sample_frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    sample_frame = apply_rotation_if_needed(sample_frame, rotation)
     
     height, width = sample_frame.shape[:2]
     print(f"Video dimensions after rotation: {width}x{height}")
+
+    # Mosaic tiles target resolution (2K per camera tile) else nvenc will fail
+    tile_target_width = 2048
+    tile_target_height = 1152
+    tile_size = (tile_target_width, tile_target_height)
+    print(f"Mosaic tiles will be resized to {tile_target_width}x{tile_target_height}")
+    mosaic_width = tile_target_width * 3
+    mosaic_height = tile_target_height * 3
     
     print("\nStep 4: Creating video writers")
     
@@ -787,39 +855,53 @@ def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frame
         if GSTREAMER_AVAILABLE:
             mosaic_video = GstVideoWriter(
                 os.path.join(mosaic_dir, 'mosaic_enhanced_sync.mp4'),
-                width * 3, height * 3, fps, codec="h265"
+                mosaic_width, mosaic_height, fps, codec="h265"
             )
         else:
             mosaic_video = OpenCVVideoWriter(
                 os.path.join(mosaic_dir, 'mosaic_enhanced_sync.mp4'),
-                width * 3, height * 3, fps
+                mosaic_width, mosaic_height, fps
             )
     except Exception as e:
         print(f"GStreamer failed: {e}, using OpenCV fallback")
         mosaic_video = OpenCVVideoWriter(
             os.path.join(mosaic_dir, 'mosaic_enhanced_sync.mp4'),
-            width * 3, height * 3, fps
+            mosaic_width, mosaic_height, fps
         )
     
-    # Per-camera writers
     camera_writers = {}
+    nvenc_camera_ids = set()
+    if GSTREAMER_AVAILABLE:
+        if nvenc_camera_limit is None:
+            nvenc_camera_limit = 2
+        nvenc_camera_ids = set(cameras[:max(0, nvenc_camera_limit)])
+        print(f"Using NVENC for {len(nvenc_camera_ids)} per-camera streams: {sorted(nvenc_camera_ids)}")
+    else:
+        nvenc_camera_limit = 0
+    
     for camera_id in cameras:
         try:
-            if GSTREAMER_AVAILABLE:
-                writer = GstVideoWriter(
-                    os.path.join(per_camera_dir, f"{camera_id}_enhanced_sync.mp4"),
-                    width, height, fps, codec="h265"
-                )
+            output_path = os.path.join(per_camera_dir, f"{camera_id}_enhanced_sync.mp4")
+            if camera_id in nvenc_camera_ids:
+                writer = GstVideoWriter(output_path, width, height, fps, codec="h265")
             else:
-                writer = OpenCVVideoWriter(
-                    os.path.join(per_camera_dir, f"{camera_id}_enhanced_sync.mp4"),
-                    width, height, fps
-                )
+                writer = OpenCVVideoWriter(output_path, width, height, fps)
             camera_writers[camera_id] = writer
         except Exception as e:
             print(f"Failed to create writer for {camera_id}: {e}")
     
     black_frame = np.zeros((height, width, 3), dtype=np.uint8)
+    black_tile = np.zeros((tile_target_height, tile_target_width, 3), dtype=np.uint8)
+    camera_positions = {reader.camera_id: idx for idx, reader in enumerate(camera_readers)}
+    
+    def fetch_frame_payload(reader, target_timestamp):
+        frame, frame_info = reader.get_best_frame_for_timestamp(target_timestamp, threshold_global_units)
+        is_actual = frame is not None
+        if is_actual:
+            frame = apply_rotation_if_needed(frame, rotation)
+        else:
+            frame = black_frame
+        return reader.camera_id, frame, frame_info, is_actual
     
     print(f"\nStep 5: Processing {len(master_timeline)} enhanced timestamps")
     print(f"Using threshold: {threshold_ms} ms = {threshold_global_units:.2f} global units")
@@ -837,10 +919,34 @@ def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frame
             print(f"Progress: {frame_count}/{len(master_timeline)} ({frame_count/len(master_timeline)*100:.1f}%)")
         
         # Advance all camera buffers to current timestamp
-        for reader in camera_readers:
-            reader.advance_to_timestamp(global_timestamp, threshold_global_units)
+        if executor:
+            advance_futures = [
+                executor.submit(reader.advance_to_timestamp, global_timestamp, threshold_global_units)
+                for reader in camera_readers
+            ]
+            for future in advance_futures:
+                future.result()
+        else:
+            for reader in camera_readers:
+                reader.advance_to_timestamp(global_timestamp, threshold_global_units)
         
-        output_frames = []
+        if executor:
+            frame_futures = [
+                executor.submit(fetch_frame_payload, reader, global_timestamp)
+                for reader in camera_readers
+            ]
+            frame_results = [future.result() for future in frame_futures]
+        else:
+            frame_results = [fetch_frame_payload(reader, global_timestamp) for reader in camera_readers]
+        
+        ordered_results = [None] * len(camera_readers)
+        for cam_id, frame, frame_info, is_actual in frame_results:
+            idx = camera_positions.get(cam_id)
+            if idx is not None:
+                ordered_results[idx] = (frame, frame_info, is_actual)
+        
+        per_camera_frames = []
+        mosaic_frames = []
         timestamp_frame_info = {
             "global_timestamp": global_timestamp,
             "frame_number": frame_count,
@@ -849,53 +955,65 @@ def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frame
         }
         
         # Collect frames from all cameras
-        for reader in camera_readers:
-            frame, frame_info = reader.get_best_frame_for_timestamp(global_timestamp, threshold_global_units)
-            
-            if frame is not None:
-                # Apply rotation
-                if rotation == 90:
-                    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-                elif rotation == 180:
-                    frame = cv2.rotate(frame, cv2.ROTATE_180)
-                elif rotation == 270:
-                    frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                
-                output_frames.append(frame)
-                stats['synchronized_frames'] += 1
-                stats['camera_stats'][reader.camera_id]['actual'] += 1
+        for idx, camera_id in enumerate(cameras):
+            frame_data = ordered_results[idx]
+            if frame_data is None:
+                frame = black_frame
+                frame_info = {
+                    'frame_type': 'black_frame',
+                    'reason': 'missing_frame_data'
+                }
+                is_actual = False
             else:
-                output_frames.append(black_frame)
-                stats['black_frames'] += 1
-                stats['camera_stats'][reader.camera_id]['black'] += 1
+                frame, frame_info, is_actual = frame_data
             
-            timestamp_frame_info["camera_frames"][reader.camera_id] = frame_info
+            per_camera_frames.append(frame)
+            if is_actual:
+                if frame.shape[1] != tile_target_width or frame.shape[0] != tile_target_height:
+                    mosaic_tile = cv2.resize(frame, tile_size, interpolation=cv2.INTER_AREA)
+                else:
+                    mosaic_tile = frame
+            else:
+                mosaic_tile = black_tile
+            mosaic_frames.append(mosaic_tile)
+            if is_actual:
+                stats['synchronized_frames'] += 1
+                stats['camera_stats'][camera_id]['actual'] += 1
+            else:
+                stats['black_frames'] += 1
+                stats['camera_stats'][camera_id]['black'] += 1
+            
+            timestamp_frame_info["camera_frames"][camera_id] = frame_info
         
         # Create mosaic (3x3 grid)
-        if len(output_frames) >= 9:
+        if len(mosaic_frames) >= 9:
             # Create 3x3 mosaic
-            mosaic = np.zeros((height * 3, width * 3, 3), dtype=np.uint8)
-            for i, frame in enumerate(output_frames[:9]):
+            mosaic = np.zeros((mosaic_height, mosaic_width, 3), dtype=np.uint8)
+            for i, frame in enumerate(mosaic_frames[:9]):
                 row = i // 3
                 col = i % 3
-                mosaic[row*height:(row+1)*height, col*width:(col+1)*width] = frame
+                mosaic[row*tile_target_height:(row+1)*tile_target_height,
+                       col*tile_target_width:(col+1)*tile_target_width] = frame
         else:
             # Pad with black frames if less than 9 cameras
-            while len(output_frames) < 9:
-                output_frames.append(black_frame)
-            mosaic = np.zeros((height * 3, width * 3, 3), dtype=np.uint8)
-            for i, frame in enumerate(output_frames):
+            while len(mosaic_frames) < 9:
+                mosaic_frames.append(black_tile)
+            mosaic = np.zeros((mosaic_height, mosaic_width, 3), dtype=np.uint8)
+            for i, frame in enumerate(mosaic_frames):
                 row = i // 3
                 col = i % 3
-                mosaic[row*height:(row+1)*height, col*width:(col+1)*width] = frame
+                mosaic[row*tile_target_height:(row+1)*tile_target_height,
+                       col*tile_target_width:(col+1)*tile_target_width] = frame
         
         # Write mosaic frame
         mosaic_video.write(mosaic)
         
         # Write individual camera frames
-        for i, (camera_id, writer) in enumerate(camera_writers.items()):
-            if i < len(output_frames):
-                writer.write(output_frames[i])
+        for idx, camera_id in enumerate(cameras):
+            frame = per_camera_frames[idx]
+            writer = camera_writers.get(camera_id)
+            if writer:
+                writer.write(frame)
         
         # Store frame tracking info
         frame_tracking["frame_sequence"].append(timestamp_frame_info)
@@ -911,6 +1029,9 @@ def build_synchronized_videos(data_path, output_dir, threshold_ms=100, max_frame
     # Clean up camera readers
     for reader in camera_readers:
         reader.cleanup()
+    
+    if executor:
+        executor.shutdown(wait=True)
     
     print("\nStep 6: Saving results and statistics")
     
@@ -952,6 +1073,10 @@ def main():
     parser.add_argument("--fps", type=int, default=20, help="Output video frame rate")
     parser.add_argument("--max-frames", type=int, help="Maximum number of frames to process")
     parser.add_argument("--rotation", type=int, default=0, choices=[0, 90, 180, 270], help="Rotation angle for output videos")
+    parser.add_argument("--workers", type=int, help="Number of worker threads to parallelize decoding/selection")
+    parser.add_argument("--nvenc-camera-limit", type=int, default=2,
+                        help="Number of per-camera videos that should use NVENC (requires GStreamer)")
+    parser.add_argument("--verbose", action="store_true", help="Enable detailed debug logging")
     
     args = parser.parse_args()
     
@@ -959,13 +1084,18 @@ def main():
         print(f"Error: Data path {args.data_path} does not exist")
         return
     
+    global VERBOSE
+    VERBOSE = args.verbose
+
     build_synchronized_videos(
         args.data_path,
         args.output_dir,
         threshold_ms=args.threshold,
         max_frames=args.max_frames,
         fps=args.fps,
-        rotation=args.rotation
+        rotation=args.rotation,
+        workers=args.workers,
+        nvenc_camera_limit=args.nvenc_camera_limit
     )
 
 
