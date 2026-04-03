@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = '';
 
 export async function fetchSensors() {
   const response = await fetch(`${BASE_URL}/sensors`);

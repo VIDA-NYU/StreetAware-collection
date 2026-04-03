@@ -17,7 +17,8 @@ _REAL_SENSORS = [
         "password": "reip",
         "display_name": "Sensor 184",
         "process_match": "filter.py",
-        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py",
+        # {timeout} is replaced with the duration in seconds from the frontend
+        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py --duration {timeout}",
     },
     {
         "name": "sensor-122",
@@ -27,7 +28,7 @@ _REAL_SENSORS = [
         "password": "reip",
         "display_name": "Sensor 122",
         "process_match": "filter.py",
-        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py",
+        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py --duration {timeout}",
     },
     {
         "name": "sensor-108",
@@ -37,7 +38,7 @@ _REAL_SENSORS = [
         "password": "reip",
         "display_name": "Sensor 108",
         "process_match": "filter.py",
-        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py",
+        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py --duration {timeout}",
     },
     {
         "name": "sensor-227",
@@ -47,7 +48,7 @@ _REAL_SENSORS = [
         "password": "reip",
         "display_name": "Sensor 227",
         "process_match": "filter.py",
-        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py",
+        "command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py --duration {timeout}",
     },
 ]
 
@@ -60,7 +61,7 @@ _MOCK_SENSORS = [
         "password": "sensor",
         "display_name": "Mock Sensor 1",
         "process_match": "log_writer.py",
-        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name {display_name}",
+        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name '{display_name}' --duration {timeout}",
     },
     {
         "name": "mock-2222",
@@ -70,7 +71,7 @@ _MOCK_SENSORS = [
         "password": "sensor",
         "display_name": "Mock Sensor 2",
         "process_match": "log_writer.py",
-        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name {display_name}",
+        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name '{display_name}' --duration {timeout}",
     },
     {
         "name": "mock-2223",
@@ -80,7 +81,7 @@ _MOCK_SENSORS = [
         "password": "sensor",
         "display_name": "Mock Sensor 3",
         "process_match": "log_writer.py",
-        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name {display_name}",
+        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name '{display_name}' --duration {timeout}",
     },
     {
         "name": "mock-2224",
@@ -90,18 +91,19 @@ _MOCK_SENSORS = [
         "password": "sensor",
         "display_name": "Mock Sensor 4",
         "process_match": "log_writer.py",
-        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name {display_name}",
+        "command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name '{display_name}' --duration {timeout}",
     },
 ]
 
 MODES = {
     "real": {
         "sensors": _REAL_SENSORS,
-        "default_command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py",
+        # {timeout} is replaced with the duration in seconds from the frontend
+        "default_command": "cd software/reip-pipelines/smart-filter && stdbuf -oL -eL python3 -u filter.py --duration {timeout}",
     },
     "mock": {
         "sensors": _MOCK_SENSORS,
-        "default_command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name {display_name}",
+        "default_command": "stdbuf -oL -eL python3 -u /opt/mock-sensor/log_writer.py --name {display_name} --duration {timeout}",
     },
 }
 

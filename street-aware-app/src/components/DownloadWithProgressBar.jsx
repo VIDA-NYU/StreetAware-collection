@@ -51,7 +51,7 @@ export default function DownloadWithProgressBar() {
       return null;
     };
 
-    const es = new EventSource("http://localhost:8080/download-data");
+    const es = new EventSource("/download-data");
     es.onmessage = (e) => {
       const line = e.data.trim();
       if (!line) return;
@@ -59,24 +59,31 @@ export default function DownloadWithProgressBar() {
       if (line.startsWith(":")) return;
 
       // PROGRESS <host with spaces allowed> <done_bytes> <total_bytes>
-      const progressMatch = line.match(/^PROGRESS\s+(.+)\s+(\d+)\s+(\d+)$/);
-      if (progressMatch) {
-        const parsedHost = progressMatch[1];
-        const host = resolveHost(parsedHost);
-        const done = parseInt(progressMatch[2], 10);
-        const total = parseInt(progressMatch[3], 10);
-        if (!host) {
-          // Unknown host in stream; skip to avoid creating stray cards
-          console.warn("Progress for unknown host:", parsedHost);
+      // Host names like "Sensor 108" contain numbers, so we need to parse from the end
+      if (line.startsWith("PROGRESS ")) {
+        const parts = line.split(/\s+/);
+        // Format: PROGRESS <host parts...> <done> <total>
+        // At minimum: PROGRESS host done total = 4 parts
+        if (parts.length >= 4) {
+          const total = parseInt(parts[parts.length - 1], 10);
+          const done = parseInt(parts[parts.length - 2], 10);
+          // Host is everything between PROGRESS and the last two numbers
+          const parsedHost = parts.slice(1, parts.length - 2).join(" ");
+          const host = resolveHost(parsedHost);
+          
+          if (!host) {
+            // Unknown host in stream; skip to avoid creating stray cards
+            console.warn("Progress for unknown host:", parsedHost);
+            return;
+          }
+          setHosts((prev) => {
+            return {
+              ...prev,
+              [host]: { ...prev[host], done, total, status: "downloading" },
+            };
+          });
           return;
         }
-        setHosts((prev) => {
-          return {
-            ...prev,
-            [host]: { ...prev[host], done, total, status: "downloading" },
-          };
-        });
-        return;
       }
 
       // COMPLETE <host> <rest...>

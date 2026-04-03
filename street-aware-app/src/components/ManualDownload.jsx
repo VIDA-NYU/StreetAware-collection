@@ -31,7 +31,7 @@ export default function ManualDownload() {
   const fetchRemoteFolders = async () => {
     setLoadingFolders(true);
     try {
-      const resp = await fetch("http://localhost:8080/remote-folders");
+      const resp = await fetch("/remote-folders");
       const data = await resp.json();
       setFoldersByHost(data);
     } catch (e) {
@@ -89,7 +89,7 @@ export default function ManualDownload() {
 
     const sel = UTF8toB64(chosen);
     const es = new EventSource(
-      `http://localhost:8080/download-data/manual?sel=${encodeURIComponent(sel)}`
+      `/download-data/manual?sel=${encodeURIComponent(sel)}`
     );
 
     es.onmessage = (e) => {

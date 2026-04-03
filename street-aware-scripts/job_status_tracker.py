@@ -34,6 +34,7 @@ def _safe_read():
 def _safe_write(data):
     with open(STATUS_FILE, "w") as f:
         json.dump(data, f, indent=2, default=str)
+        f.flush()
 
 def get_current_session_id():
     """Get or create current session ID."""
@@ -49,16 +50,45 @@ def get_current_session_id():
         f.write(session_id)
     return session_id
 
-def update_status(host, state, pid=None, clear_pid=False, session_id=None, **extra):
-    """Persist host state along with optional metadata such as PID or log path."""
+
+def create_new_session():
+    """Create a new session ID and clear old status data."""
+    with status_lock:
+        # Create new session ID
+        session_id = datetime.now().strftime("%Y%m%d_%H%M%S_") + str(uuid.uuid4())[:8]
+        with open(CURRENT_SESSION_FILE, 'w') as f:
+            f.write(session_id)
+        
+        # Clear the status file for fresh start
+        _safe_write({})
+        
+        return session_id
+
+def update_status(host, state, pid=None, clear_pid=False, session_id=None, force=False, **extra):
+    """Persist host state along with optional metadata such as PID or log path.
+    
+    Args:
+        force: If True, allows overwriting terminal states (used for verification).
+    """
     with status_lock:
         data = _safe_read()
         if host not in data:
             data[host] = {}
 
         record = data[host]
+        
+        # Don't overwrite terminal states with non-terminal states (unless forced)
+        terminal_states = {"completed", "terminated", "stopped", "failed"}
+        current_state = record.get("state")
+        if not force and current_state in terminal_states and state not in terminal_states:
+            # Skip update - don't overwrite terminal state
+            return
         record["state"] = state
         record["last_updated"] = datetime.now().isoformat()
+        
+        # Clear stale flag when updating
+        record.pop("stale", None)
+        record.pop("stale_seconds", None)
         
         # Always preserve session_id if provided or exists
         if session_id:
@@ -99,6 +129,52 @@ def force_clear_status():
 def read_status():
     with status_lock:
         return _safe_read()
+
+
+def read_status_with_staleness_check(stale_threshold_seconds=30):
+    """Read status and mark entries as stale if last_check is too old.
+    
+    This helps detect when the monitoring process has stopped but
+    the status file still shows 'running'.
+    """
+    from datetime import datetime, timezone
+    
+    with status_lock:
+        data = _safe_read()
+        now = datetime.now(timezone.utc)
+        
+        for host, record in data.items():
+            state = record.get("state")
+            
+            # Only check running/starting states
+            if state not in ["running", "starting", "connecting", "reconnecting"]:
+                continue
+            
+            # Check if last_check is stale
+            last_check_str = record.get("last_check") or record.get("last_updated")
+            if last_check_str:
+                try:
+                    # Handle both 'Z' suffix and no timezone
+                    if last_check_str.endswith('Z'):
+                        last_check = datetime.fromisoformat(last_check_str.replace('Z', '+00:00'))
+                    elif '+' in last_check_str or last_check_str.endswith('+00:00'):
+                        last_check = datetime.fromisoformat(last_check_str)
+                    else:
+                        # Assume UTC if no timezone specified
+                        last_check = datetime.fromisoformat(last_check_str).replace(tzinfo=timezone.utc)
+                except (ValueError, AttributeError):
+                    last_check = None
+                
+                if last_check:
+                    age = (now - last_check).total_seconds()
+                    if age > stale_threshold_seconds:
+                        record["stale"] = True
+                        record["stale_seconds"] = int(age)
+                    else:
+                        record.pop("stale", None)
+                        record.pop("stale_seconds", None)
+        
+        return data
 
 def get_session_hosts(session_id):
     """Get all hosts for a specific session."""

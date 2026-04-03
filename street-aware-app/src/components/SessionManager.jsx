@@ -14,7 +14,7 @@ export default function SessionManager() {
 
   const fetchSessions = async () => {
     try {
-      const resp = await fetch("http://localhost:8080/sessions");
+      const resp = await fetch("/sessions");
       const data = await resp.json();
       setSessions(data);
     } catch (e) {
@@ -24,7 +24,7 @@ export default function SessionManager() {
 
   const fetchCurrentSession = async () => {
     try {
-      const resp = await fetch("http://localhost:8080/current-session");
+      const resp = await fetch("/current-session");
       const data = await resp.json();
       setCurrentSession(data);
     } catch (e) {
@@ -36,8 +36,8 @@ export default function SessionManager() {
     setLoading(true);
     try {
       const url = host 
-        ? `http://localhost:8080/sessions/${sessionId}/logs?host=${encodeURIComponent(host)}`
-        : `http://localhost:8080/sessions/${sessionId}/logs`;
+        ? `/sessions/${sessionId}/logs?host=${encodeURIComponent(host)}`
+        : `/sessions/${sessionId}/logs`;
       const resp = await fetch(url);
       const logs = await resp.json();
       setSessionLogs(prev => ({ ...prev, [sessionId]: logs }));

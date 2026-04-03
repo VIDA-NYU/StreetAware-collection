@@ -2,9 +2,9 @@
 import React from 'react';
 import SSHControl from './components/SSHControl';
 import HealthMonitor from "./components/HealthMonitor";
+import CameraPreview from "./components/CameraPreview";
 import DownloadWithProgressBar from "./components/DownloadWithProgressBar";
 import ManualDownload from "./components/ManualDownload";
-import SessionManager from "./components/SessionManager";
 import './App.css';
 
 function App() {
@@ -30,6 +30,11 @@ function App() {
             <HealthMonitor />
           </div>
 
+          {/* Camera Preview Section */}
+          <div className="lg:col-span-2">
+            <CameraPreview />
+          </div>
+
           {/* SSH Control Section */}
           <div className="lg:col-span-2">
             <SSHControl />
@@ -43,11 +48,6 @@ function App() {
           {/* Manual Download Section */}
           <div className="lg:col-span-2">
             <ManualDownload />
-          </div>
-
-          {/* Session Manager Section */}
-          <div className="lg:col-span-2">
-            <SessionManager />
           </div>
         </div>
       </main>

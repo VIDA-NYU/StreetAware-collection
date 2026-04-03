@@ -11,7 +11,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m sensor && echo 'sensor:sensor' | chpasswd && \
-    mkdir -p /var/run/sshd
+    mkdir -p /var/run/sshd && \
+    mkdir -p /tmp/sensor_logs && chmod 777 /tmp/sensor_logs
 
 COPY log_writer.py /opt/mock-sensor/log_writer.py
 RUN chmod +x /opt/mock-sensor/log_writer.py

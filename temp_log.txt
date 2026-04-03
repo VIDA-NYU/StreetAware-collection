@@ -1,0 +1,1220 @@
+cv2.version = 4.5.4
+warning:  importing jetson.utils is deprecated.  please 'import jetson_utils' instead.
+warning:  importing jetson.inference is deprecated.  please 'import jetson_inference' instead.
+[FILTER] Starting sensor data collection...
+[FILTER] Data directory: /media/reip/ssd/data/DATE_12_04_2025_TIME_15_11_52
+[FILTER] Duration: 60 seconds
+[FILTER] Process PID: 80185
+
+Starting: Graph(_default_), 4 children:
+    Task(USB_Task), 1 children:
+        Block(Bulk_USB): (0/0 in, 1 out; 0 processed) - --
+
+    Task(Cam_0_Task), 3 children:
+        Block(Cam_0	): (0/0 in, 1 out; 0 processed) - --
+        Block(Cam_0_Bundle): (1/1 in, 1 out; 0 processed) - --
+        Block(Cam_0_Writer): (1/1 in, 1 out; 0 processed) - --
+
+    Task(Cam_1_Task), 3 children:
+        Block(Cam_1	): (0/0 in, 1 out; 0 processed) - --
+        Block(Cam_1_Bundle): (1/1 in, 1 out; 0 processed) - --
+        Block(Cam_1_Writer): (1/1 in, 1 out; 0 processed) - --
+
+    Task(Mic_Array_Task), 3 children:
+        Block(Mic_Array): (0/0 in, 1 out; 0 processed) - --
+        Block(Audio_Rebuffer): (1/1 in, 1 out; 0 processed) - --
+        Block(Audio_Writer): (1/1 in, 1 out; 0 processed) - --
+
+ 
+
+Element was already included: tee
+Element was already included: tee
+Element was already included: tee
+Element was already included: tee
+USB Flags: 0x80, Timestamp: 1026739233
+
+	Enter bus loop
+
+	Started pipeline
+	Pipeline state changed from null to ready
+	Enter bus loop
+
+
+	Started pipeline
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Pipeline state changed from ready to paused
+	Unknown message: <flags GST_MESSAGE_NEW_CLOCK of type Gst.MessageType> pipeline0
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Pipeline state changed from null to ready
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Pipeline state changed from ready to paused
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_NEW_CLOCK of type Gst.MessageType> pipeline0
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_STATUS of type Gst.MessageType> src
+	Unknown message: <flags GST_MESSAGE_STREAM_START of type Gst.MessageType> pipeline0
+	Unknown message: <flags GST_MESSAGE_ASYNC_DONE of type Gst.MessageType> pipeline0
+	Pipeline state changed from paused to playing
+	Unknown message: <flags GST_MESSAGE_STREAM_START of type Gst.MessageType> pipeline0
+	Unknown message: <flags GST_MESSAGE_ASYNC_DONE of type Gst.MessageType> pipeline0
+	Pipeline state changed from paused to playing
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:43:50,229[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 3.013 sec:
+    [USB_Task]
+        Bulk_USB	 + 2466 buffers (822.27 x/s),  2466 total (727.48 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  38 buffers (12.64 x/s),    38 total (12.59 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  38 buffers (12.64 x/s),    38 total (9.59 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  56 buffers (18.63 x/s),    56 total (18.57 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  56 buffers (18.61 x/s),    56 total (14.21 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  71 buffers (23.62 x/s),    71 total (18.17 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   2 buffers (0.67 x/s),     2 total (0.51 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:43:53,227[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 6.012 sec:
+    [USB_Task]
+        Bulk_USB	 + 2321 buffers (772.80 x/s),  4787 total (748.76 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  54 buffers (17.99 x/s),    92 total (15.28 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  54 buffers (17.99 x/s),    92 total (13.21 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.66 x/s),   130 total (21.61 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.67 x/s),   130 total (18.73 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (24.00 x/s),   143 total (20.70 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),     5 total (0.72 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     1 total (0.14 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+[32m[INFO][0m[2m2023-03-25 08:43:56,242[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 9.027 sec:
+    [USB_Task]
+        Bulk_USB	 + 2266 buffers (754.14 x/s),  7053 total (750.48 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  45 buffers (14.95 x/s),   137 total (15.17 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  45 buffers (14.95 x/s),   137 total (13.74 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.58 x/s),   204 total (22.60 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.58 x/s),   204 total (20.50 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  73 buffers (24.23 x/s),   216 total (21.77 x/s avg),  sources=[], sinks=[1]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),     8 total (0.81 x/s avg),  sources=[1], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     1 total (0.10 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:43:59,238[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 12.023 sec:
+    [USB_Task]
+        Bulk_USB	 + 1516 buffers (504.91 x/s),  8569 total (691.02 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  49 buffers (16.34 x/s),   186 total (15.47 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  49 buffers (16.34 x/s),   186 total (14.34 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  70 buffers (23.34 x/s),   274 total (22.79 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  70 buffers (23.34 x/s),   274 total (21.16 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  69 buffers (23.01 x/s),   285 total (22.06 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    11 total (0.85 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     2 total (0.15 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:02,243[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 15.028 sec:
+    [USB_Task]
+        Bulk_USB	 + 2024 buffers (673.14 x/s), 10593 total (687.53 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  43 buffers (14.30 x/s),   229 total (15.23 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  43 buffers (14.30 x/s),   229 total (14.33 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.63 x/s),   348 total (23.15 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.63 x/s),   348 total (21.81 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.96 x/s),   357 total (22.42 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    14 total (0.88 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     2 total (0.13 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:05,245[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 18.029 sec:
+    [USB_Task]
+        Bulk_USB	 + 2421 buffers (806.78 x/s), 13014 total (706.97 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  46 buffers (15.33 x/s),   275 total (15.25 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  46 buffers (15.33 x/s),   275 total (14.49 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.66 x/s),   422 total (23.40 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.66 x/s),   422 total (22.26 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.99 x/s),   429 total (22.67 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    17 total (0.90 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     3 total (0.16 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:08,249[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 21.034 sec:
+    [USB_Task]
+        Bulk_USB	 + 1569 buffers (521.94 x/s), 14583 total (681.00 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  45 buffers (14.97 x/s),   320 total (15.21 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  45 buffers (14.97 x/s),   320 total (14.56 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  71 buffers (23.62 x/s),   493 total (23.44 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  71 buffers (23.62 x/s),   493 total (22.45 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   1 buffers (0.33 x/s),     1 total (0.05 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  71 buffers (23.63 x/s),   500 total (22.80 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    20 total (0.91 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     4 total (0.18 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+Avg Write: 0.499 ms. Avg Read: 0.559 ms. 15000 loops in 22.276 sec. Write/Read Errors: 65/40
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+[32m[INFO][0m[2m2023-03-25 08:44:11,249[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 24.034 sec:
+    [USB_Task]
+        Bulk_USB	 + 1826 buffers (608.62 x/s), 16409 total (672.10 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  44 buffers (14.67 x/s),   364 total (15.14 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  44 buffers (14.67 x/s),   364 total (14.57 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.67 x/s),   567 total (23.59 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.67 x/s),   567 total (22.72 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     1 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (24.00 x/s),   572 total (22.95 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    23 total (0.92 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     4 total (0.16 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:14,258[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 27.042 sec:
+    [USB_Task]
+        Bulk_USB	 + 2160 buffers (718.67 x/s), 18569 total (677.21 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  55 buffers (18.30 x/s),   419 total (15.49 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  55 buffers (18.30 x/s),   419 total (14.97 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     0 total (0.00 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.62 x/s),   641 total (23.70 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.62 x/s),   641 total (22.92 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     1 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.96 x/s),   644 total (23.05 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    26 total (0.93 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     5 total (0.18 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:17,261[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 30.045 sec:
+    [USB_Task]
+        Bulk_USB	 + 1833 buffers (611.12 x/s), 20402 total (670.69 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  45 buffers (15.00 x/s),   464 total (15.44 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  45 buffers (15.00 x/s),   464 total (14.97 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   1 buffers (0.33 x/s),     1 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  71 buffers (23.66 x/s),   712 total (23.70 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  71 buffers (23.66 x/s),   712 total (22.99 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     1 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  71 buffers (23.62 x/s),   715 total (23.11 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    29 total (0.94 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     5 total (0.16 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+
+	New file index: 1
+[32m[INFO][0m[2m2023-03-25 08:44:20,259[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 33.044 sec:
+    [USB_Task]
+        Bulk_USB	 + 1899 buffers (632.23 x/s), 22301 total (667.24 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  41 buffers (13.64 x/s),   505 total (15.28 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  41 buffers (13.65 x/s),   505 total (14.86 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.63 x/s),   786 total (23.78 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.64 x/s),   786 total (23.14 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     1 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (24.01 x/s),   787 total (23.19 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    32 total (0.94 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     6 total (0.18 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:23,268[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 36.053 sec:
+    [USB_Task]
+        Bulk_USB	 + 2395 buffers (795.88 x/s), 24696 total (677.86 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  44 buffers (14.62 x/s),   549 total (15.22 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  44 buffers (14.62 x/s),   549 total (14.84 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  74 buffers (24.60 x/s),   860 total (23.85 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  74 buffers (24.60 x/s),   860 total (23.26 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     1 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.93 x/s),   859 total (23.25 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    35 total (0.95 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     7 total (0.19 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:26,330[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 39.114 sec:
+    [USB_Task]
+        Bulk_USB	 + 2260 buffers (742.08 x/s), 26956 total (682.83 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  40 buffers (13.13 x/s),   589 total (15.06 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  40 buffers (13.12 x/s),   589 total (14.71 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.02 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  72 buffers (23.57 x/s),   932 total (23.83 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  72 buffers (23.57 x/s),   932 total (23.28 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   1 buffers (0.33 x/s),     2 total (0.05 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.52 x/s),   931 total (23.27 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (0.98 x/s),    38 total (0.95 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     7 total (0.17 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:29,312[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 42.097 sec:
+    [USB_Task]
+        Bulk_USB	 + 1566 buffers (522.13 x/s), 28522 total (671.47 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  74 buffers (24.70 x/s),   663 total (15.75 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  74 buffers (24.71 x/s),   663 total (15.40 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.02 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  46 buffers (15.39 x/s),   978 total (23.23 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  46 buffers (15.39 x/s),   978 total (22.73 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     2 total (0.05 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  71 buffers (23.80 x/s),  1002 total (23.31 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.01 x/s),    41 total (0.95 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.34 x/s),     8 total (0.19 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+Avg Write: 0.506 ms. Avg Read: 0.563 ms. 15000 loops in 22.264 sec. Write/Read Errors: 33/28
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:32,319[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 45.104 sec:
+    [USB_Task]
+        Bulk_USB	 + 2106 buffers (700.43 x/s), 30628 total (673.38 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  74 buffers (24.60 x/s),   737 total (16.34 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  74 buffers (24.60 x/s),   737 total (16.00 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.02 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  50 buffers (16.62 x/s),  1028 total (22.79 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  50 buffers (16.63 x/s),  1028 total (22.33 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     2 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.95 x/s),  1074 total (23.35 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    44 total (0.96 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),     8 total (0.17 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+
+	New file index: 1
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:35,323[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 48.108 sec:
+    [USB_Task]
+        Bulk_USB	 + 2253 buffers (750.46 x/s), 32881 total (678.16 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  74 buffers (24.66 x/s),   811 total (16.86 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  74 buffers (24.66 x/s),   811 total (16.53 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.02 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  49 buffers (16.32 x/s),  1077 total (22.39 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  49 buffers (16.32 x/s),  1077 total (21.96 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     2 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.97 x/s),  1146 total (23.39 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    47 total (0.96 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),     9 total (0.18 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:38,329[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 51.114 sec:
+    [USB_Task]
+        Bulk_USB	 + 1412 buffers (469.53 x/s), 34293 total (665.97 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  69 buffers (22.95 x/s),   880 total (17.21 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  69 buffers (22.95 x/s),   880 total (16.90 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     1 total (0.02 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  44 buffers (14.64 x/s),  1121 total (21.93 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  44 buffers (14.64 x/s),  1121 total (21.54 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     2 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  70 buffers (23.29 x/s),  1216 total (23.38 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    50 total (0.96 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),    10 total (0.19 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:41,336[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 54.120 sec:
+    [USB_Task]
+        Bulk_USB	 + 2097 buffers (697.53 x/s), 36390 total (667.71 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  74 buffers (24.61 x/s),   954 total (17.63 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  74 buffers (24.61 x/s),   954 total (17.32 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   1 buffers (0.33 x/s),     2 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  45 buffers (14.96 x/s),  1166 total (21.54 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  45 buffers (14.96 x/s),  1166 total (21.18 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     2 total (0.04 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  73 buffers (24.27 x/s),  1289 total (23.43 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    53 total (0.96 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   0 buffers (0.00 x/s),    10 total (0.18 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+[32m[INFO][0m[2m2023-03-25 08:44:44,346[0m [32m [G(_default_)[4 children]][0m: [32mStatus after 57.131 sec:
+    [USB_Task]
+        Bulk_USB	 + 2483 buffers (824.37 x/s), 38873 total (675.92 x/s avg),  sources=[], sinks=[0]
+    
+    [Cam_0_Task]
+        Cam_0		 +  75 buffers (24.91 x/s),  1029 total (18.01 x/s avg),  sources=[], sinks=[0]
+        Cam_0_Bundle	 +  75 buffers (24.91 x/s),  1029 total (17.72 x/s avg),  sources=[0], sinks=[0]
+        Cam_0_Writer	 +   0 buffers (0.00 x/s),     2 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Cam_1_Task]
+        Cam_1		 +  48 buffers (15.95 x/s),  1214 total (21.25 x/s avg),  sources=[], sinks=[0]
+        Cam_1_Bundle	 +  48 buffers (15.95 x/s),  1214 total (20.91 x/s avg),  sources=[0], sinks=[0]
+        Cam_1_Writer	 +   0 buffers (0.00 x/s),     2 total (0.03 x/s avg),  sources=[0], sinks=[0]
+    
+    [Mic_Array_Task]
+        Mic_Array	 +  72 buffers (23.92 x/s),  1361 total (23.45 x/s avg),  sources=[], sinks=[0]
+        Audio_Rebuffer	 +   3 buffers (1.00 x/s),    56 total (0.97 x/s avg),  sources=[0], sinks=[0]
+        Audio_Writer	 +   1 buffers (0.33 x/s),    11 total (0.19 x/s avg),  sources=[0], sinks=[0]
+
+[0m
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+USB: Empty read
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+
+Stats for [92mBlock(Bulk_USB): (0/0 in, 1 out; 40425 processed) - done[0m
+Processed 40425 buffers in 61.01 sec. (669.30 x/s)
+Dropped: [0]  Skipped: []  Left in Queue: in=[] out=[0]
+Total 61.0064 sec in Bulk_USB:
+    ( 1.00%) - init      (avg = 0.607325 ± 0.000000, n =        1) (0.607s)
+    ( 0.64%) - wait      (avg = 0.389991 ± 0.000000, n =        1) (0.390s)
+    ( 0.20%) - sleep     (avg = 0.000002 ± 0.000048, n =   80,852) (0.122s)
+    ( 0.41%) - source    (avg = 0.000006 ± 0.000070, n =   40,425) (0.247s)
+    (84.20%) - process   (avg = 0.001271 ± 0.001664, n =   40,425) (51.370s)
+    ( 1.79%) - sink      (avg = 0.000027 ± 0.000416, n =   40,425) (1.094s)
+    ( 0.00%) - finish    (avg = 0.000003 ± 0.000000, n =        1) (0.000s)
+    (11.76%) - service   (avg = 7.177102 ± 0.000000, n =        1) (7.177s)
+
+	Inserted EOS
+
+	New file index: 2
+
+Stats for [92mBlock(Mic_Array): (0/0 in, 1 out; 1430 processed) - done[0m
+Processed 1430 buffers in 60.96 sec. (23.46 x/s)
+Dropped: [0]  Skipped: []  Left in Queue: in=[] out=[0]
+Total 60.9644 sec in Mic_Array:
+    ( 0.03%) - init      (avg = 0.018751 ± 0.000000, n =        1) (0.019s)
+    ( 1.48%) - wait      (avg = 0.900329 ± 0.000000, n =        1) (0.900s)
+    ( 0.03%) - sleep     (avg = 0.000006 ± 0.000047, n =    2,862) (0.018s)
+    ( 0.09%) - source    (avg = 0.000038 ± 0.001036, n =    1,430) (0.054s)
+    (97.40%) - process   (avg = 0.041525 ± 0.007528, n =    1,430) (59.380s)
+    ( 0.16%) - sink      (avg = 0.000070 ± 0.000432, n =    1,430) (0.100s)
+    ( 0.00%) - finish    (avg = 0.000071 ± 0.000000, n =        1) (0.000s)
+    ( 0.81%) - service   (avg = 0.493824 ± 0.000000, n =        1) (0.494s)
+
+Stats for [92mBlock(Audio_Rebuffer): (1/1 in, 1 out; 59 processed) - done[0m
+Processed 59 buffers in 60.92 sec. (0.97 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[0] out=[0]
+Total 60.9170 sec in Audio_Rebuffer:
+    ( 0.00%) - init      (avg = 0.000173 ± 0.000000, n =        1) (0.000s)
+    ( 1.48%) - wait      (avg = 0.900781 ± 0.000000, n =        1) (0.901s)
+    (83.07%) - sleep     (avg = 0.000259 ± 0.000625, n =  195,263) (50.606s)
+    ( 0.01%) - source    (avg = 0.000069 ± 0.000077, n =       59) (0.004s)
+    ( 1.89%) - process   (avg = 0.019546 ± 0.026295, n =       59) (1.153s)
+    ( 0.02%) - sink      (avg = 0.000185 ± 0.000309, n =       59) (0.011s)
+    ( 0.00%) - finish    (avg = 0.000005 ± 0.000000, n =        1) (0.000s)
+    (13.53%) - service   (avg = 8.242309 ± 0.000000, n =        1) (8.242s)
+
+Stats for [92mBlock(Audio_Writer): (1/1 in, 1 out; 11 processed) - done[0m
+Processed 11 buffers in 60.91 sec. (0.18 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[0] out=[0]
+Total 60.9122 sec in Audio_Writer:
+    ( 0.00%) - init      (avg = 0.000007 ± 0.000000, n =        1) (0.000s)
+    ( 1.47%) - wait      (avg = 0.893470 ± 0.000000, n =        1) (0.893s)
+    (83.69%) - sleep     (avg = 0.000262 ± 0.000762, n =  194,791) (50.976s)
+    ( 0.00%) - source    (avg = 0.000048 ± 0.000009, n =       11) (0.001s)
+    ( 1.68%) - process   (avg = 0.092971 ± 0.024287, n =       11) (1.023s)
+    ( 0.01%) - sink      (avg = 0.000433 ± 0.000175, n =       11) (0.005s)
+    ( 0.00%) - finish    (avg = 0.000005 ± 0.000000, n =        1) (0.000s)
+    (13.16%) - service   (avg = 8.014513 ± 0.000000, n =        1) (8.015s)
+
+	End-Of-Stream reached
+	Unknown message: <flags GST_MESSAGE_QOS of type Gst.MessageType> v4l2src0
+
+	Exit bus loop
+
+Camera_0:
+	Pulled - 1098, Lost - 0
+
+Stats for [92mBlock(Cam_0	): (0/0 in, 1 out; 1098 processed) - done[0m
+Processed 1098 buffers in 61.06 sec. (18.28 x/s)
+Dropped: [0]  Skipped: []  Left in Queue: in=[] out=[1]
+Total 61.0557 sec in Cam_0	:
+    ( 1.58%) - init      (avg = 0.963270 ± 0.000000, n =        1) (0.963s)
+    ( 0.02%) - wait      (avg = 0.011669 ± 0.000000, n =        1) (0.012s)
+    ( 0.02%) - sleep     (avg = 0.000004 ± 0.000013, n =    2,198) (0.010s)
+    ( 0.02%) - source    (avg = 0.000010 ± 0.000019, n =    1,098) (0.011s)
+    (97.56%) - process   (avg = 0.054252 ± 0.033344, n =    1,098) (59.569s)
+    ( 0.31%) - sink      (avg = 0.000175 ± 0.000329, n =    1,098) (0.192s)
+    ( 0.06%) - finish    (avg = 0.039247 ± 0.000000, n =        1) (0.039s)
+    ( 0.43%) - service   (avg = 0.260019 ± 0.000000, n =        1) (0.260s)
+
+Stats for [92mBlock(Cam_0_Bundle): (1/1 in, 1 out; 1097 processed) - done[0m
+Processed 1097 buffers in 60.97 sec. (17.99 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[1] out=[0]
+Total 60.9675 sec in Cam_0_Bundle:
+    ( 0.00%) - init      (avg = 0.000011 ± 0.000000, n =        1) (0.000s)
+    ( 1.56%) - wait      (avg = 0.951852 ± 0.000000, n =        1) (0.952s)
+    (86.25%) - sleep     (avg = 0.000287 ± 0.000788, n =  182,978) (52.586s)
+    ( 0.11%) - source    (avg = 0.000061 ± 0.000059, n =    1,097) (0.067s)
+    ( 0.09%) - process   (avg = 0.000049 ± 0.000096, n =    1,097) (0.054s)
+    ( 0.12%) - sink      (avg = 0.000066 ± 0.000762, n =    1,097) (0.072s)
+    ( 0.00%) - finish    (avg = 0.000036 ± 0.000000, n =        1) (0.000s)
+    (11.87%) - service   (avg = 7.235306 ± 0.000000, n =        1) (7.235s)
+
+Stats for [92mBlock(Cam_0_Writer): (1/1 in, 1 out; 2 processed) - done[0m
+Processed 2 buffers in 60.97 sec. (0.03 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[0] out=[0]
+Total 60.9725 sec in Cam_0_Writer:
+    ( 0.00%) - init      (avg = 0.000033 ± 0.000000, n =        1) (0.000s)
+    ( 1.58%) - wait      (avg = 0.962035 ± 0.000000, n =        1) (0.962s)
+    (86.16%) - sleep     (avg = 0.000289 ± 0.000839, n =  181,882) (52.533s)
+    ( 0.00%) - source    (avg = 0.000075 ± 0.000018, n =        2) (0.000s)
+    ( 0.38%) - process   (avg = 0.114721 ± 0.030020, n =        2) (0.229s)
+    ( 0.17%) - sink      (avg = 0.051216 ± 0.046243, n =        2) (0.102s)
+    ( 0.00%) - finish    (avg = 0.000004 ± 0.000000, n =        1) (0.000s)
+    (11.72%) - service   (avg = 7.145141 ± 0.000000, n =        1) (7.145s)
+
+Stats for [92mBlock(Cam_0	): (0/0 in, 1 out; 1098 processed) - done[0m
+Processed 1098 buffers in 61.06 sec. (18.28 x/s)
+Dropped: [0]  Skipped: []  Left in Queue: in=[] out=[1]
+Total 61.0557 sec in Cam_0	:
+    ( 1.58%) - init      (avg = 0.963270 ± 0.000000, n =        1) (0.963s)
+    ( 0.02%) - wait      (avg = 0.011669 ± 0.000000, n =        1) (0.012s)
+    ( 0.02%) - sleep     (avg = 0.000004 ± 0.000013, n =    2,198) (0.010s)
+    ( 0.02%) - source    (avg = 0.000010 ± 0.000019, n =    1,098) (0.011s)
+    (97.56%) - process   (avg = 0.054252 ± 0.033344, n =    1,098) (59.569s)
+    ( 0.31%) - sink      (avg = 0.000175 ± 0.000329, n =    1,098) (0.192s)
+    ( 0.06%) - finish    (avg = 0.039247 ± 0.000000, n =        1) (0.039s)
+    ( 0.43%) - service   (avg = 0.260019 ± 0.000000, n =        1) (0.260s)
+
+Stats for [92mBlock(Cam_0_Bundle): (1/1 in, 1 out; 1097 processed) - done[0m
+Processed 1097 buffers in 60.97 sec. (17.99 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[1] out=[0]
+Total 60.9675 sec in Cam_0_Bundle:
+    ( 0.00%) - init      (avg = 0.000011 ± 0.000000, n =        1) (0.000s)
+    ( 1.56%) - wait      (avg = 0.951852 ± 0.000000, n =        1) (0.952s)
+    (86.25%) - sleep     (avg = 0.000287 ± 0.000788, n =  182,978) (52.586s)
+    ( 0.11%) - source    (avg = 0.000061 ± 0.000059, n =    1,097) (0.067s)
+    ( 0.09%) - process   (avg = 0.000049 ± 0.000096, n =    1,097) (0.054s)
+    ( 0.12%) - sink      (avg = 0.000066 ± 0.000762, n =    1,097) (0.072s)
+    ( 0.00%) - finish    (avg = 0.000036 ± 0.000000, n =        1) (0.000s)
+    (11.87%) - service   (avg = 7.235306 ± 0.000000, n =        1) (7.235s)
+
+Stats for [92mBlock(Cam_0_Writer): (1/1 in, 1 out; 2 processed) - done[0m
+Processed 2 buffers in 60.97 sec. (0.03 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[0] out=[0]
+Total 60.9725 sec in Cam_0_Writer:
+    ( 0.00%) - init      (avg = 0.000033 ± 0.000000, n =        1) (0.000s)
+    ( 1.58%) - wait      (avg = 0.962035 ± 0.000000, n =        1) (0.962s)
+    (86.16%) - sleep     (avg = 0.000289 ± 0.000839, n =  181,882) (52.533s)
+    ( 0.00%) - source    (avg = 0.000075 ± 0.000018, n =        2) (0.000s)
+    ( 0.38%) - process   (avg = 0.114721 ± 0.030020, n =        2) (0.229s)
+    ( 0.17%) - sink      (avg = 0.051216 ± 0.046243, n =        2) (0.102s)
+    ( 0.00%) - finish    (avg = 0.000004 ± 0.000000, n =        1) (0.000s)
+    (11.72%) - service   (avg = 7.145141 ± 0.000000, n =        1) (7.145s)
+
+	Inserted EOS
+
+	New file index: 2
+
+	End-Of-Stream reached
+
+	Exit bus loop
+
+Camera_2:
+	Pulled - 1262, Lost - 0
+
+Stats for [92mBlock(Cam_1	): (0/0 in, 1 out; 1262 processed) - done[0m
+Processed 1262 buffers in 61.08 sec. (21.00 x/s)
+Dropped: [0]  Skipped: []  Left in Queue: in=[] out=[1]
+Total 61.0833 sec in Cam_1	:
+    ( 1.55%) - init      (avg = 0.946202 ± 0.000000, n =        1) (0.946s)
+    ( 0.01%) - wait      (avg = 0.007526 ± 0.000000, n =        1) (0.008s)
+    ( 0.02%) - sleep     (avg = 0.000005 ± 0.000017, n =    2,526) (0.012s)
+    ( 0.02%) - source    (avg = 0.000010 ± 0.000018, n =    1,262) (0.012s)
+    (97.48%) - process   (avg = 0.047182 ± 0.028416, n =    1,262) (59.544s)
+    ( 0.33%) - sink      (avg = 0.000161 ± 0.000203, n =    1,262) (0.203s)
+    ( 0.07%) - finish    (avg = 0.040008 ± 0.000000, n =        1) (0.040s)
+    ( 0.52%) - service   (avg = 0.318383 ± 0.000000, n =        1) (0.318s)
+
+Stats for [92mBlock(Cam_1_Bundle): (1/1 in, 1 out; 1261 processed) - done[0m
+Processed 1261 buffers in 60.95 sec. (20.69 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[1] out=[0]
+Total 60.9498 sec in Cam_1_Bundle:
+    ( 0.00%) - init      (avg = 0.000009 ± 0.000000, n =        1) (0.000s)
+    ( 1.53%) - wait      (avg = 0.930308 ± 0.000000, n =        1) (0.930s)
+    (85.66%) - sleep     (avg = 0.000289 ± 0.000695, n =  180,633) (52.209s)
+    ( 0.14%) - source    (avg = 0.000067 ± 0.000118, n =    1,261) (0.084s)
+    ( 0.15%) - process   (avg = 0.000073 ± 0.000856, n =    1,261) (0.092s)
+    ( 0.11%) - sink      (avg = 0.000052 ± 0.000390, n =    1,261) (0.066s)
+    ( 0.00%) - finish    (avg = 0.000028 ± 0.000000, n =        1) (0.000s)
+    (12.42%) - service   (avg = 7.568400 ± 0.000000, n =        1) (7.568s)
+
+Stats for [92mBlock(Cam_1_Writer): (1/1 in, 1 out; 2 processed) - done[0m
+Processed 2 buffers in 60.96 sec. (0.03 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[0] out=[0]
+Total 60.9627 sec in Cam_1_Writer:
+    ( 0.00%) - init      (avg = 0.000037 ± 0.000000, n =        1) (0.000s)
+    ( 1.54%) - wait      (avg = 0.940533 ± 0.000000, n =        1) (0.941s)
+    (86.17%) - sleep     (avg = 0.000293 ± 0.000712, n =  179,029) (52.530s)
+    ( 0.00%) - source    (avg = 0.000041 ± 0.000001, n =        2) (0.000s)
+    ( 0.54%) - process   (avg = 0.163672 ± 0.149122, n =        2) (0.327s)
+    ( 0.09%) - sink      (avg = 0.025914 ± 0.014228, n =        2) (0.052s)
+    ( 0.00%) - finish    (avg = 0.000005 ± 0.000000, n =        1) (0.000s)
+    (11.67%) - service   (avg = 7.112873 ± 0.000000, n =        1) (7.113s)
+
+Stats for [92mBlock(Cam_1	): (0/0 in, 1 out; 1262 processed) - done[0m
+Processed 1262 buffers in 61.08 sec. (21.00 x/s)
+Dropped: [0]  Skipped: []  Left in Queue: in=[] out=[1]
+Total 61.0833 sec in Cam_1	:
+    ( 1.55%) - init      (avg = 0.946202 ± 0.000000, n =        1) (0.946s)
+    ( 0.01%) - wait      (avg = 0.007526 ± 0.000000, n =        1) (0.008s)
+    ( 0.02%) - sleep     (avg = 0.000005 ± 0.000017, n =    2,526) (0.012s)
+    ( 0.02%) - source    (avg = 0.000010 ± 0.000018, n =    1,262) (0.012s)
+    (97.48%) - process   (avg = 0.047182 ± 0.028416, n =    1,262) (59.544s)
+    ( 0.33%) - sink      (avg = 0.000161 ± 0.000203, n =    1,262) (0.203s)
+    ( 0.07%) - finish    (avg = 0.040008 ± 0.000000, n =        1) (0.040s)
+    ( 0.52%) - service   (avg = 0.318383 ± 0.000000, n =        1) (0.318s)
+
+Stats for [92mBlock(Cam_1_Bundle): (1/1 in, 1 out; 1261 processed) - done[0m
+Processed 1261 buffers in 60.95 sec. (20.69 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[1] out=[0]
+Total 60.9498 sec in Cam_1_Bundle:
+    ( 0.00%) - init      (avg = 0.000009 ± 0.000000, n =        1) (0.000s)
+    ( 1.53%) - wait      (avg = 0.930308 ± 0.000000, n =        1) (0.930s)
+    (85.66%) - sleep     (avg = 0.000289 ± 0.000695, n =  180,633) (52.209s)
+    ( 0.14%) - source    (avg = 0.000067 ± 0.000118, n =    1,261) (0.084s)
+    ( 0.15%) - process   (avg = 0.000073 ± 0.000856, n =    1,261) (0.092s)
+    ( 0.11%) - sink      (avg = 0.000052 ± 0.000390, n =    1,261) (0.066s)
+    ( 0.00%) - finish    (avg = 0.000028 ± 0.000000, n =        1) (0.000s)
+    (12.42%) - service   (avg = 7.568400 ± 0.000000, n =        1) (7.568s)
+
+Stats for [92mBlock(Cam_1_Writer): (1/1 in, 1 out; 2 processed) - done[0m
+Processed 2 buffers in 60.96 sec. (0.03 x/s)
+Dropped: [0]  Skipped: [0]  Left in Queue: in=[0] out=[0]
+Total 60.9627 sec in Cam_1_Writer:
+    ( 0.00%) - init      (avg = 0.000037 ± 0.000000, n =        1) (0.000s)
+    ( 1.54%) - wait      (avg = 0.940533 ± 0.000000, n =        1) (0.941s)
+    (86.17%) - sleep     (avg = 0.000293 ± 0.000712, n =  179,029) (52.530s)
+    ( 0.00%) - source    (avg = 0.000041 ± 0.000001, n =        2) (0.000s)
+    ( 0.54%) - process   (avg = 0.163672 ± 0.149122, n =        2) (0.327s)
+    ( 0.09%) - sink      (avg = 0.025914 ± 0.014228, n =        2) (0.052s)
+    ( 0.00%) - finish    (avg = 0.000005 ± 0.000000, n =        1) (0.000s)
+    (11.67%) - service   (avg = 7.112873 ± 0.000000, n =        1) (7.113s)
+[FILTER] Data collection completed after 60 seconds.

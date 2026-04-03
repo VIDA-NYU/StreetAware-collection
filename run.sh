@@ -1,26 +1,21 @@
-# #!/bin/bash
-
-# rm -f react.pid fastapi.pid fastapi.log react.log
-
-# echo "Starting React App..."
-# nohup bash -c "cd street-aware-app && npm start" > react.log 2>&1 & echo $! > react.pid
-
-# echo "Starting FastAPI Service..."
-# nohup bash -c "cd street-aware-service && source myenv/bin/activate && python app.py" > fastapi.log 2>&1 & echo $! > fastapi.pid
-
-# echo "✅ Services started in background. Use ./stop.sh to terminate them."
-
 #!/bin/bash
 
 MODE="real"
 case "${1:-}" in
-  mock|--mock|-m)
+  mock|MOCK|--mock|-m)
     MODE="mock"
     ;;
 esac
 
 # Stop existing processes if running
-./stop.sh 2>/dev/null
+./stop.sh "$MODE" 2>/dev/null
+
+# If mock mode, start mock sensors first
+if [ "$MODE" = "mock" ]; then
+  echo "Starting mock sensors..."
+  cd mock-sensors && ./build_and_run.sh && cd ..
+  echo ""
+fi
 
 echo "Starting React App (mode: $MODE)..."
 SENSOR_MODE="$MODE" nohup bash -c "cd street-aware-app && npm run start" > react.log 2>&1 &
@@ -32,4 +27,5 @@ SENSOR_MODE="$MODE" nohup bash -c "cd street-aware-service && source myenv/bin/a
 sleep 1
 lsof -ti :8080 > fastapi.pid
 
+echo ""
 echo "✅ Services started in $MODE mode. Use ./stop.sh to terminate them."
