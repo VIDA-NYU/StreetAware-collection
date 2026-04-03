@@ -16,3 +16,6 @@ street-aware-service/.log_cache/
 
 *.pyc
 **/__pycache__/
+
+./reip-pipelines-227
+./reip-pipelines
